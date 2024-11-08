@@ -2,97 +2,100 @@
   <div class="flex h-screen flex-col">
     <!-- Header -->
     <div class="bg-white p-4  border-b border-grey">
-  <div class="container mx-auto flex justify-between items-center">
-    <h1 class="text-lg font-semibold">Survey2GIS Parser Generator</h1>
-    <div class="flex items-center gap-4">
-      <div class="relative" v-click-outside="closeDropdown">
-  <button
-    @click="isDropdownOpen = !isDropdownOpen"
-    class="px-4 py-2 border rounded flex items-center gap-2 bg-white hover:bg-gray-50 w-full"
-  >
-    <i class="mr-2">↑</i>
-    Select Import Option
-    <svg 
-      class="w-4 h-4 transform transition-transform ml-auto"
-      :class="{'rotate-180': isDropdownOpen}"
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
-  </button>
+    <div class="  mx-2 flex justify-between items-center">
+      <!-- Logo -->
+      <h1 class="text-lg font-semibold"><i class="pi pi-bullseye me-3 text-black-500"></i><a href="/">Survey2GIS Parser Generator</a></h1>
+  
+      <!-- menu -->
+      <div class="flex items-center gap-6">
+        <!-- Import Options Dropdown -->
+        <div class="relative" v-click-outside="closeDropdown">
+          <button
+            @click="isDropdownOpen = !isDropdownOpen"
+            class="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 bg-white hover:bg-gray-50 w-full transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <span class="text-gray-700 font-medium">Select Import Option</span>
+            <i 
+              class="pi pi-chevron-down text-gray-500 transition-transform duration-200"
+              :class="{'rotate-180': isDropdownOpen}"
+            ></i>
+          </button>
 
-  <div 
-    v-if="isDropdownOpen"
-    class="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg z-10 w-full"
-  >
-    <div class="py-1">
-      <label 
-        for="file-upload" 
-        class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer w-full"
-        @click.prevent="triggerFileUpload"
-      >
-        <i class="mr-2">↑</i>
-        Load Parser File
-      </label>
-      
-      <button
-        class="w-full text-left flex items-center px-4 py-2 hover:bg-gray-100"
-        @click="loadSampleData"
-      >
-        <i class="mr-2">📄</i>
-        Load Sample Data
-      </button>
+          <div 
+            v-if="isDropdownOpen"
+            class="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-full overflow-hidden"
+          >
+            <div class="py-1">
+              <label 
+                for="file-upload" 
+                class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
+                @click.prevent="triggerFileUpload"
+              >
+                <i class="pi pi-upload text-blue-600 me-3"></i>
+                <span class="text-gray-700">Upload parser file</span>
+              </label>
+              
+              <button
+                class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+                @click="loadSampleData"
+              >
+                <i class="pi pi-cloud-download text-blue-600 me-3"></i>
+                <span class="text-gray-700">Load sample data</span>
+              </button>
+            </div>
+          </div>
+
+          <input
+            type="file"
+            accept=".ini,.txt"
+            @change="handleFileUpload"
+            class="hidden"
+            ref="fileInput"
+            id="file-upload"
+          />
+        </div>
+
+        <!-- Download Button -->
+        <button
+          @click="downloadIni"
+          :disabled="!isFormValid"
+          class="py-2 px-4 rounded-lg flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          :class="isFormValid 
+            ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm focus:ring-green-500' 
+            : 'bg-gray-100 border border-gray-300 text-gray-400 cursor-not-allowed'"
+        >
+          <i class="pi pi-download"></i>
+          <span>Download parser file</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="h-6 w-px bg-gray-300 mx-2"></div>
+
+        <!-- Help Links -->
+        <div class="flex items-center gap-4">
+          <button 
+            @click.stop="showHelp('imprint')" 
+            class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
+          >
+            Imprint
+          </button>
+
+          <button 
+            @click.stop="showHelp('help')" 
+            class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
+          >
+            Help
+          </button>
+        </div>
+      </div>
+
     </div>
-  </div>
-
-  <input
-    type="file"
-    accept=".ini,.txt"
-    @change="handleFileUpload"
-    class="hidden"
-    ref="fileInput"
-    id="file-upload"
-  />
-</div>
-
-      <button
-        @click="downloadIni"
-        :disabled="!isFormValid"
-        class="py-1 px-4 rounded"
-        :class="isFormValid ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-400 cursor-not-allowed'"
-      >
-        Download parser
-      </button>
-
-      <span class='text-gray-500'>|</span>
-
-
-      <button 
-        @click.stop="showHelp('imprint')" 
-        class="text-gray-600 hover:text-gray-900"
-      >
-        Imprint
-      </button>
-
-      <button 
-        @click.stop="showHelp('help')" 
-        class="text-gray-600 hover:text-gray-900"
-      >
-        Help
-      </button>
-
-
-
-    </div>
-  </div>
 </div>
 
     <!-- Main Content -->
     <div class="flex flex-1 overflow-hidden">
       <!-- Left Panel -->
-      <div class="w-1/2 p-4 bg-gray-100 overflow-auto">
+      <div class="w-1/2 p-4 bg-gray-100 overflow-auto left-panel ps-6 pe-6 pt-6" id="left_panel">
         <!-- Error Message -->
         <div v-if="fileError" class="mb-4 p-4 bg-red-100 text-red-700 rounded">
           <div class="flex items-center">
@@ -102,308 +105,40 @@
         </div>
 
         <!-- Parser Section Card -->
-        <div 
-          class="shadow mb-3" 
-          :class="isParserSectionInvalid ? 'bg-red-50' : 'bg-white'"
-        >
-          <div class="p-4">
-            <div 
-  class="flex justify-between items-center cursor-pointer relative"
-  @click="toggleSection('parser')"
->
-  <div class="flex items-center">
-    <h3 class="text-lg font-semibold">Parser Section</h3>
-    <svg 
-      v-if="!isParserSectionInvalid"
-      class="w-5 h-5 ml-2 text-green-500" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        stroke-width="2" 
-        d="M5 13l4 4L19 7"
+      <ParserSection
+        v-model="parserSection"
+        :mandatory-fields="mandatoryFields.parser"
+        :is-open="openSection === 'parser'"
+        :show-start-label="showStartLabel"
+        @toggle-section="toggleSection"
+        @help="showHelp"
       />
-    </svg>
-    <!-- Start Here Label - Always visible -->
-    <div 
-      v-if="showStartLabel"
-      class="flex items-center ml-3 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm font-medium animate-pulse transition-opacity duration-500"
-      :class="{'opacity-0': isLabelFading}"
-    >
-      <svg 
-        class="w-4 h-4 mr-1 animate-bounce" 
-        fill="none" 
-        stroke="currentColor" 
-        viewBox="0 0 24 24"
-      >
-        <path 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          strokeWidth="2" 
-          d="M13 7l5 5m0 0l-5 5m5-5H6"
-        />
-      </svg>
-      First step!
-    </div>
-  </div>
-  <div class="flex items-center">
-    <button 
-      @click.stop="showHelp('parser')" 
-      class="text-blue-500 hover:text-blue-600 mr-2"
-    >
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-      </svg>
-    </button>
-    <svg 
-      class="w-5 h-5 ml-2 transform transition-transform"
-      :class="{'rotate-180': openSection === 'parser'}"
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
-</div>
 
-            <!-- Parser Content -->
-            <div v-show="openSection === 'parser'"  class="mt-4">
-              <p class="text-gray-600 mb-4">
-                Fill out the required parser configuration below. Need help? Click the (?) icon for guidance.
-              </p>
-            <div class="grid grid-cols-2 gap-4">
-              <template v-for="(value, key) in parserSection" :key="key">
-                <div class="mb-2">
-                  <div class="flex items-center justify-between mb-1">
-                    <label class="text-xs font-medium text-gray-700">
-                      {{ key }}
-                      <span v-if="isFieldMandatory('parser', key)" class="text-red-500">*</span>
-                    </label>
-                  </div>
-                  <select
-                    v-if="['key_unique', 'tag_strict'].includes(key) || key === 'tagging_mode'"
-                    v-model="parserSection[key]"
-                    class="w-full border rounded p-1 text-sm"
-                    :class="{'border-red-500': isFieldMandatory('parser', key) && !parserSection[key]}"
-                  >
-                    <template v-if="['key_unique', 'tag_strict'].includes(key)">
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </template>
-                    <template v-else>
-                      <option v-for="opt in ['min', 'max', 'end', 'none']" :key="opt" :value="opt">
-                        {{ opt }}
-                      </option>
-                    </template>
-                  </select>
-                  <input
-                    v-else
-                    v-model="parserSection[key]"
-                    type="text"
-                    class="w-full border rounded p-1 text-sm"
-                    :class="{'border-red-500': isFieldMandatory('parser', key) && !parserSection[key]}"
-                    :placeholder="getDefaultValue(key)"
-                  />
-                </div>
-              </template>
-            </div>
-        </div>
-      </div>
-    </div>
-
-      <!-- Field Sections -->
-      <template v-for="(field, fieldIndex) in fieldSections" :key="fieldIndex">
-        <div 
-          class="shadow mb-3  rounded-lg" 
-          :class="isFieldSectionInvalid(fieldIndex) ? 'bg-red-50' : 'bg-white'"
-        >
-          <div class="p-4">
-            <div 
-  class="flex justify-between items-center cursor-pointer"
-  @click="toggleSection(fieldIndex)"
->
-  <div class="flex items-center">
-    <h3 class="text-lg font-semibold">Field Section {{ fieldIndex + 1 }}</h3>
-    <svg 
-      v-if="!isFieldSectionInvalid(fieldIndex)"
-      class="w-5 h-5 ml-2 text-green-500" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path 
-        stroke-linecap="round" 
-        stroke-linejoin="round" 
-        stroke-width="2" 
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  </div>
-  <div class="flex items-center">
-    <button @click.stop="showHelp('field')" class="text-blue-500 hover:text-blue-600 mr-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-      </svg>
-    </button>
-    <button @click.stop="removeFieldSection(fieldIndex)" class="text-red-500">
-      🗑
-    </button>
-    <svg 
-      class="w-5 h-5 ml-2 transform transition-transform"
-      :class="{'rotate-180': openSection === fieldIndex}"
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path d="M19 9l-7 7-7-7" />
-    </svg>
-  </div>
-</div>
-            <!-- Field Content -->
-              <div v-show="openSection === fieldIndex" class="mt-4">
-                <div class="grid grid-cols-2 gap-3">
-                  <!-- Name field -->
-                  <div class="col-span-2">
-                    <label class="text-xs font-medium text-gray-700">
-                      Name
-                      <span class="text-red-500">*</span>
-                    </label>
-                    <input
-                      v-model="field.name"
-                      type="text"
-                      class="w-full border rounded p-1 text-sm"
-                      :class="{'border-red-500': !field.name || validationErrors[`field-${fieldIndex}`]}"
-                      @input="validateField(fieldIndex, field.name)"
-                    />
-                    <p v-if="validationErrors[`field-${fieldIndex}`]" class="text-xs text-red-500 mt-1">
-                      {{ validationErrors[`field-${fieldIndex}`].join(', ') }}
-                    </p>
-                  </div>
-
-                  <!-- Info field -->
-                  <div class="col-span-2">
-                    <label class="text-xs font-medium text-gray-700">Info</label>
-                    <textarea
-                      v-model="field.info"
-                      class="w-full border rounded p-1 text-sm"
-                      rows="2"
-                    ></textarea>
-                  </div>
-
-                  <!-- Type field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">
-                      Type
-                      <span class="text-red-500">*</span>
-                    </label>
-                    <select v-model="field.type" class="w-full border rounded p-1 text-sm">
-                      <option value="integer">integer</option>
-                      <option value="double">double</option>
-                      <option value="text">text</option>
-                    </select>
-                  </div>
-
-                  <!-- Change Case field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Change Case</label>
-                    <select v-model="field.change_case" class="w-full border rounded p-1 text-sm">
-                      <option value="lower">lower</option>
-                      <option value="upper">upper</option>
-                    </select>
-                  </div>
-
-                  <!-- Empty Allowed field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Empty Allowed</label>
-                    <select v-model="field.empty_allowed" class="w-full border rounded p-1 text-sm">
-                      <option value="yes">yes</option>
-                      <option value="no">no</option>
-                    </select>
-                  </div>
-
-                  <!-- Merge Separators field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Merge Separators</label>
-                    <select v-model="field.merge_separators" class="w-full border rounded p-1 text-sm">
-                      <option value="yes">yes</option>
-                      <option value="no">no</option>
-                    </select>
-                  </div>
-
-                  <!-- Persistent field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Persistent</label>
-                    <select v-model="field.persistent" class="w-full border rounded p-1 text-sm">
-                      <option value="yes">yes</option>
-                      <option value="no">no</option>
-                    </select>
-                  </div>
-
-                  <!-- Skip field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Skip</label>
-                    <select v-model="field.skip" class="w-full border rounded p-1 text-sm">
-                      <option value="yes">yes</option>
-                      <option value="no">no</option>
-                    </select>
-                  </div>
-
-                  <!-- Unique field -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Unique</label>
-                    <select v-model="field.unique" class="w-full border rounded p-1 text-sm">
-                      <option value="yes">yes</option>
-                      <option value="no">no</option>
-                    </select>
-                  </div>
-
-                  <!-- Quotation and Separator in one row -->
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Quotation</label>
-                    <input
-                      v-model="field.quotation"
-                      type="text"
-                      class="w-full border rounded p-1 text-sm"
-                      placeholder="'"
-                    />
-                  </div>
-
-                  <div class="mb-2">
-                    <label class="text-xs font-medium text-gray-700">Separator</label>
-                    <input
-                      v-model="field.separator"
-                      type="text"
-                      class="w-full border rounded p-1 text-sm"
-                      placeholder=";"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
+        <!-- Field Sections -->
+          <template v-for="(field, index) in fieldSections" :key="index">
+              <FieldSection
+                v-model="fieldSections[index]"
+                :index="index"
+                :is-open="openSection === index"
+                :validation-errors="validationErrors"
+                :mandatory-fields="mandatoryFields.field"
+                @toggle-section="toggleSection"
+                @help="showHelp"
+                @remove="removeFieldSection"
+                @validate="validateField"
+              />
+          </template>
 
         <!-- Add Field Button at the bottom -->
-        <div class="flex justify-end mb-6">
-        <button
-          @click="addFieldSection"
-          class="py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-800 transition-colors"
-        >
-          Add Field Section
-        </button>
-      </div>
+          <AddFieldButton @add="addFieldSection" />
       </div>
 
       <!-- Right Panel -->
-      <div class="w-1/2 flex flex-col pb-4 bg-gray-800">
-        <div class="flex-grow bg-gray-800 text-white overflow-auto code__wrapper ">
-          <pre class="w-full h-full bg-gray-900 font-mono text-sm p-8 code__field">{{ generatedIni }}</pre>
+      <div class="w-1/2 flex flex-col pb-4 ps-4" id="right_panel">
+        <div class="flex-grow overflow-auto code__wrapper">
+          <pre class="rounded-lg"><code class="language-ini code__field">{{ generatedIni }}</code></pre>
         </div>
-       </div>
+      </div>
     </div>
 
     <!-- Help Sidebar -->
@@ -446,536 +181,565 @@
 
 <script>
 import HelpSidebar from './components/HelpSidebar.vue'
+import ParserSection from './components/ParserSection.vue'
+import FieldSection from './components/FieldSection.vue'
+import AddFieldButton from './components/AddFieldButton.vue'
+import {
+    ref,
+    watch,
+    onMounted,
+    nextTick,
+    computed
+} from 'vue'
+import {
+    setupPrism,
+    highlightElement
+} from './utils/prism-setup'
+import 'primeicons/primeicons.css'
+import 'prismjs/themes/prism-tomorrow.css'
+
+// Initialize Prism syntax highlighting
+setupPrism()
 
 export default {
-  components: {
-    HelpSidebar
-  },
-  name: 'Survey2GISGenerator',
-  mounted() {
-  // Existing scroll container code
-  const scrollContainer = document.querySelector('.code__wrapper');
-  if (scrollContainer) {
-    scrollContainer.style.overflowY = 'auto';
-    scrollContainer.style.position = 'relative';
-  }
+    name: 'Survey2GISGenerator',
 
-    this.showToast = true;
-      setTimeout(() => {
-        this.closeToast();
-      }, 6000);
-
-    // Check for first visit (toast logic)
-    // if (!this.getCookie('hasVisitedSurvey2GIS')) {
-    //   this.showToast = true;
-    //   this.setCookie('hasVisitedSurvey2GIS', 'true', 365);
-      
-    //   // Auto-hide toast after 8 seconds
-    //   setTimeout(() => {
-    //     this.closeToast();
-    //   }, 8000);
-    // }
-
-    // Handle start label visibility (moved outside the cookie check)
-    this.showStartLabel = true;  // Ensure it's visible initially
-    this.isLabelFading = false; // Reset fade state
-    
-    // Start the hide sequence
-    setTimeout(() => {
-      this.isLabelFading = true;  // Start fade out
-      setTimeout(() => {
-        this.showStartLabel = false;  // Remove from DOM after fade
-      }, 500);  // Wait for fade animation to complete
-    }, 3000); 
-  },
-  data() {
-    return {
-      parserSection: {
-        info: '',
-        name: '',
-        comment_mark: '#',
-        coor_x: 'COORX',
-        coor_y: 'COORY',
-        coor_z: 'COORZ',
-        geom_tag_point: '.',
-        geom_tag_line: '$',
-        geom_tag_poly: '@',
-        key_field: '',
-        key_unique: 'No',
-        no_data: '-1',
-        tag_field: '',
-        tagging_mode: 'none',
-        tag_strict: 'No'
-      },
-      isDropdownOpen: false,
-      fieldSections: [],
-      generatedIni: '# preview of parser file',
-      validationErrors: {},
-      fileError: '',
-      showTooltip: null,
-      showHelpSidebar: false,
-      currentHelpSection: '',
-      openSection: '', // open parser oin start by setting value to parser
-      openFieldIndex: null,
-      showToast: false, 
-      showStartLabel: true,
-      isLabelFading: false,
-      mandatoryFields: {
-        parser: ['name', 'coor_x', 'coor_y'],
-        field: ['name', 'type']
-      }
-    }
-  },
-
-  computed: {
-
-    isParserSectionInvalid() {
-    return this.mandatoryFields.parser.some(field => 
-      !this.parserSection[field] || this.parserSection[field].trim() === ''
-    );
-  },
-
-    isFormValid() {
-      // Check mandatory parser fields
-      const isParserValid = this.mandatoryFields.parser.every(field => 
-        this.parserSection[field] && this.parserSection[field].trim() !== ''
-      )
-
-      // Check mandatory field sections
-      const areFieldSectionsValid = this.fieldSections.every(field => 
-        this.mandatoryFields.field.every(fieldName => 
-          field[fieldName] && field[fieldName].trim() !== ''
-        ) && !this.validationErrors[`field-${this.fieldSections.indexOf(field)}`]
-      )
-
-      return isParserValid && areFieldSectionsValid && this.fieldSections.length > 0
-    }
-  },
-
-  watch: {
-    parserSection: {
-      deep: true,
-      handler: 'generateIni'
-    },
-    fieldSections: {
-      deep: true,
-      handler: 'generateIni'
-    }
-  },
-
-  methods: {
-
-    isFieldSectionInvalid(fieldIndex) {
-    const field = this.fieldSections[fieldIndex];
-    
-    // Check if there are any validation errors for this field
-    if (this.validationErrors[`field-${fieldIndex}`]) {
-      return true;
-    }
-    
-    // Check mandatory fields
-    return this.mandatoryFields.field.some(fieldName => 
-      !field[fieldName] || field[fieldName].trim() === ''
-    );
-  },
-
-
-
-    closeDropdown() {
-      this.isDropdownOpen = false;
+    components: {
+        HelpSidebar,
+        ParserSection,
+        FieldSection,
+        AddFieldButton
     },
 
-    loadSampleData() {
-      // Create a mock file event with the sample.ini path
-      const samplePath = './parser/parser_desc_min.txt';
-      fetch(samplePath)
-        .then(response => response.text())
-        .then(content => {
-          this.parseIniContent(content);
-          this.closeDropdown();
+    setup() {
+        // State management using refs
+        const state = {
+            parserSection: ref({
+                info: '',
+                name: '',
+                comment_mark: '#',
+                coor_x: 'COORX',
+                coor_y: 'COORY',
+                coor_z: 'COORZ',
+                geom_tag_point: '.',
+                geom_tag_line: '$',
+                geom_tag_poly: '@',
+                key_field: '',
+                key_unique: 'No',
+                no_data: '-1',
+                tag_field: '',
+                tagging_mode: 'none',
+                tag_strict: 'No'
+            }),
+            fieldSections: ref([]),
+            validationErrors: ref({}),
+            openSection: ref(''),
+            showHelpSidebar: ref(false),
+            currentHelpSection: ref(''),
+            showStartLabel: ref(true),
+            isDropdownOpen: ref(false),
+            generatedIni: ref('# preview of parser file'),
+            fileError: ref(''),
+            showTooltip: ref(null),
+            openFieldIndex: ref(null),
+            showToast: ref(false)
+        }
+
+        // Constants
+        const mandatoryFields = {
+            parser: ['name', 'coor_x', 'coor_y'],
+            field: ['name', 'type']
+        }
+
+        const defaults = {
+            comment_mark: '#',
+            coor_x: 'COORX',
+            coor_y: 'COORY',
+            coor_z: 'COORZ',
+            geom_tag_point: '.',
+            geom_tag_line: '$',
+            geom_tag_poly: '@',
+            no_data: '-1'
+        }
+
+
+        // Computed properties
+
+        const isFormValid = computed(() => {
+            const isParserValid = mandatoryFields.parser.every(field =>
+                state.parserSection.value[field] &&
+                state.parserSection.value[field].trim() !== ''
+            )
+
+            const areFieldSectionsValid = state.fieldSections.value.every(field =>
+                mandatoryFields.field.every(fieldName =>
+                    field[fieldName] && field[fieldName].trim() !== ''
+                ) && !state.validationErrors.value[`field-${state.fieldSections.value.indexOf(field)}`]
+            )
+
+            return isParserValid && areFieldSectionsValid && state.fieldSections.value.length > 0
         })
-        .catch(error => {
-          this.fileError = `Error loading sample data: ${error.message}`;
-        });
-    },
 
-    showHelp(section) {
-      this.currentHelpSection = section
-      this.showHelpSidebar = true
-    },
-    closeHelp() {
-      this.showHelpSidebar = false
-      this.currentHelpSection = ''
-    },
-
-    closeToast() {
-      this.showToast = false;
-    },
-
-    setCookie(name, value, days) {
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + days);
-      document.cookie = `${name}=${value};expires=${expiryDate.toUTCString()};path=/`;
-    },
-
-    getCookie(name) {
-      const nameEQ = name + "=";
-      const ca = document.cookie.split(';');
-      for(let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-      }
-      return null;
-    },
-
-    isFieldMandatory(section, fieldName) {
-      return this.mandatoryFields[section]?.includes(fieldName)
-    },
-
-
-    toggleFieldSection(index) {
-      this.toggleSection(index);
-    },
-
-    triggerFileUpload() {
-      this.$refs.fileInput.click()
-    },
-
-    validateField(fieldIndex, name) {
-      const errors = this.validateFieldName(name)
-      if (errors.length > 0) {
-        this.validationErrors = {
-          ...this.validationErrors,
-          [`field-${fieldIndex}`]: errors
-        }
-      } else {
-        const newErrors = { ...this.validationErrors }
-        delete newErrors[`field-${fieldIndex}`]
-        this.validationErrors = newErrors
-      }
-    },
-
-    validateFieldName(name) {
-      const errors = []
-      if (name.length > 10) {
-        errors.push('Field name must be 10 characters or less')
-      }
-      if (!/^[A-Za-z0-9_]*$/.test(name)) {
-        errors.push('Field name can only contain letters, numbers, and underscores')
-      }
-      return errors
-    },
-
-    scrollToSection(section) {
-      this.$nextTick(() => {
-        // Get both the scroll container and the pre element
-        const scrollContainer = document.querySelector('.code__wrapper');
-        const preElement = document.querySelector('.code__field');
-        
-        if (!scrollContainer || !preElement) {
-          console.error('Required elements not found');
-          return;
+        const isParserSectionInvalid = () => {
+            return mandatoryFields.parser.some(field =>
+                !state.parserSection.value[field] ||
+                state.parserSection.value[field].trim() === ''
+            )
         }
 
-        const lines = this.generatedIni.split('\n');
-        let targetLineIndex = 0;
 
-        if (section === 'parser') {
-          targetLineIndex = lines.findIndex(line => line.trim() === '[Parser]');
-        } else {
-          let fieldCount = -1;
-          targetLineIndex = lines.findIndex((line) => {
-            if (line.trim() === '[Field]') {
-              fieldCount++;
-              if (fieldCount === section) {
-                return true;
-              }
+
+        // Methods for field management
+        const fieldManagement = {
+            isFieldSectionInvalid: (fieldIndex) => {
+                const field = state.fieldSections.value[fieldIndex]
+
+                if (state.validationErrors.value[`field-${fieldIndex}`]) {
+                    return true
+                }
+
+                return mandatoryFields.field.some(fieldName =>
+                    !field[fieldName] || field[fieldName].trim() === ''
+                )
+            },
+
+            validateField: (fieldIndex, name) => {
+                const errors = fieldManagement.validateFieldName(name)
+                if (errors.length > 0) {
+                    state.validationErrors.value = {
+                        ...state.validationErrors.value,
+                        [`field-${fieldIndex}`]: errors
+                    }
+                } else {
+                    const newErrors = {
+                        ...state.validationErrors.value
+                    }
+                    delete newErrors[`field-${fieldIndex}`]
+                    state.validationErrors.value = newErrors
+                }
+            },
+
+            validateFieldName: (name) => {
+                const errors = []
+                if (name.length > 10) {
+                    errors.push('Field name must be 10 characters or less')
+                }
+                if (!/^[A-Za-z0-9_]*$/.test(name)) {
+                    errors.push('Field name can only contain letters, numbers, and underscores')
+                }
+                return errors
+            },
+
+            addFieldSection: () => {
+                const newField = {
+                    name: '',
+                    change_case: 'lower',
+                    empty_allowed: 'no',
+                    info: '',
+                    merge_separators: 'no',
+                    persistent: 'no',
+                    quotation: "'",
+                    skip: 'no',
+                    separator: ';',
+                    type: 'text',
+                    unique: 'no'
+                }
+                state.fieldSections.value.push(newField)
+                state.openSection.value = state.fieldSections.value.length - 1
+                scrollManagement.scrollToSection(state.fieldSections.value.length - 1)
+            },
+
+            removeFieldSection: (fieldIndex) => {
+                state.fieldSections.value.splice(fieldIndex, 1)
+                const newErrors = {
+                    ...state.validationErrors.value
+                }
+                delete newErrors[`field-${fieldIndex}`]
+                state.validationErrors.value = newErrors
+
+                if (state.openSection.value === fieldIndex) {
+                    state.openSection.value = null
+                } else if (typeof state.openSection.value === 'number' && state.openSection.value > fieldIndex) {
+                    state.openSection.value--
+                }
+
+                generateIni()
             }
-            return false;
-          });
         }
 
-        if (targetLineIndex === -1) {
-          console.error('Target section not found');
-          return;
-        }
+        // Methods for scroll management
+        // Todo: improve scolling
+        const scrollManagement = {
+            scrollToSection: (section) => {
+                nextTick(() => {
+                    const scrollContainer = document.querySelector('.code__wrapper');
+                    const preElement = document.querySelector('.code__field');
+                    const leftPanelItems = document.querySelectorAll('.left-panel .section');
 
-        // Calculate scroll position
-        const lineHeight = parseInt(window.getComputedStyle(preElement).lineHeight) || 20;
-        const scrollPosition = targetLineIndex * lineHeight;
-        const visibleHeight = scrollContainer.clientHeight;
-        const centerOffset = (visibleHeight / 2 ) - (9 * lineHeight);
-        const targetPosition = Math.max(0, scrollPosition - centerOffset) ;
+                    if (!scrollContainer || !preElement || !leftPanelItems.length) {
+                        console.error('Required elements not found');
+                        return;
+                    }
 
-        // Log scroll attempt
-        console.log('Attempting to scroll:', {
-          section,
-          targetLineIndex,
-          scrollPosition,
-          visibleHeight,
-          centerOffset,
-          targetPosition,
-          containerScrollHeight: scrollContainer.scrollHeight,
-          lineHeight
-        });
+                    console.log('Left Panel Items:', leftPanelItems); // Log all left panel items for inspection
 
-        // Force scroll on the container
-        scrollContainer.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
+                    const lines = state.generatedIni.value.split('\n');
+                    let targetLineIndex = 0;
 
-        // Fallback direct scrollTop setting if smooth scroll doesn't work
-        if (!('scrollBehavior' in document.documentElement.style)) {
-          scrollContainer.scrollTop = targetPosition;
-        }
-      });
-    },
+                    // Locate the line for the desired section
+                    if (section === 'parser') {
+                        targetLineIndex = lines.findIndex(line => line.trim() === '[Parser]');
+                    } else {
+                        let fieldCount = -1;
+                        targetLineIndex = lines.findIndex((line) => {
+                            if (line.trim() === '[Field]') {
+                                fieldCount++;
+                                if (fieldCount === section) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        });
+                    }
 
-    toggleSection(section) {
-      const wasOpen = this.openSection === section;
-      this.openSection = wasOpen ? null : section;
-      
-      // Only scroll if we're opening a section
-      if (!wasOpen && section !== null) {
-        this.scrollToSection(section);
-      }
-    },
+                    if (targetLineIndex === -1) {
+                        console.error('Target section not found');
+                        return;
+                    }
 
-    addFieldSection() {
-      const newField = {
-        change_case: 'lower',
-        empty_allowed: 'no',
-        info: '',
-        merge_separators: 'no',
-        name: '',
-        persistent: 'no',
-        quotation: "'",
-        skip: 'no',
-        separator: ';',
-        type: 'text',
-        unique: 'no'
-      }
-      this.fieldSections.push(newField)
-      // Update this line to use the field index
-      this.openSection = this.fieldSections.length - 1
-      this.scrollToSection(this.fieldSections.length - 1) 
-    },
+                    const lineHeight = parseInt(window.getComputedStyle(preElement).lineHeight) || 20;
+                    const scrollPosition = targetLineIndex * lineHeight;
 
-    removeFieldSection(fieldIndex) {
-      this.fieldSections.splice(fieldIndex, 1)
-      const newErrors = { ...this.validationErrors }
-      delete newErrors[`field-${fieldIndex}`]
-      this.validationErrors = newErrors
-      
-      // Update this part to handle openSection properly
-      if (this.openSection === fieldIndex) {
-        this.openSection = null
-      } else if (typeof this.openSection === 'number' && this.openSection > fieldIndex) {
-        // Decrement openSection if we removed a field before the currently open one
-        this.openSection--
-      }
-      
-      this.generateIni()
-    },
+                    // Locate the corresponding left panel item
+                    let leftPanelItem;
+                    if (section === 'parser') {
+                        // Special case for the 'parser' section
+                        console.log('Looking for parser in the left panel'); // Debug log
+                        leftPanelItem = Array.from(leftPanelItems).find(item => item.textContent.includes('Parser')); // Update this if needed
+                    } else {
+                        leftPanelItem = leftPanelItems[section];
+                    }
 
+                    console.log('Left Panel Item for Section:', leftPanelItem); // Log the item for inspection
 
-    generateIni() {
-      let ini = '[Parser]\n'
-      Object.entries(this.parserSection).forEach(([key, value]) => {
-        if (value !== '') {
-          ini += `${key} = ${value}\n`
-        }
-      })
+                    if (!leftPanelItem) {
+                        console.error(`Left panel item for section ${section} not found`);
+                        return;
+                    }
 
-      this.fieldSections.forEach((field) => {
-        ini += '\n[Field]\n'  // Always use [Field] instead of [Field1], [Field2], etc.
-        Object.entries(field).forEach(([key, value]) => {
-          if (value !== '') {
-            ini += `${key} = ${value}\n`
-          }
-        })
-      })
+                    const leftPanelY = leftPanelItem.getBoundingClientRect().top;
+                    const scrollContainerTop = scrollContainer.getBoundingClientRect().top;
+                    let targetScrollPosition = scrollPosition + (leftPanelY - scrollContainerTop);
 
-      this.generatedIni = ini
-    },
+                    // Define an offset for the first few sections, including 'parser'
+                    const initialSectionOffset = 30; // Adjust as needed for the padding
+                    if (section === 'parser' || section <= 2) { // Apply threshold for initial sections
+                        targetScrollPosition -= initialSectionOffset;
+                    }
 
-    downloadIni() {
-      const blob = new Blob([this.generatedIni], { type: 'text/plain' })
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'survey2gis_parser.ini'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-    },
+                    scrollContainer.scrollTo({
+                        top: Math.max(0, targetScrollPosition),
+                        behavior: 'smooth'
+                    });
+                });
+            },
+            toggleSection: (section) => {
+                const wasOpen = state.openSection.value === section;
+                state.openSection.value = wasOpen ? null : section;
 
-    getDefaultValue(key) {
-      const defaults = {
-        comment_mark: '#',
-        coor_x: 'COORX',
-        coor_y: 'COORY',
-        coor_z: 'COORZ',
-        geom_tag_point: '.',
-        geom_tag_line: '$',
-        geom_tag_poly: '@',
-        no_data: '-1'
-      }
-      return defaults[key] ? `Default: ${defaults[key]}` : ''
-    },
-
-    async handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (!file) {
-      this.fileError = 'No file selected';
-      return;
-    }
-
-    // Check file extension
-    if (!file.name.toLowerCase().endsWith('.ini') && !file.name.toLowerCase().endsWith('.txt')) {
-      this.fileError = 'Invalid file type. Please upload an .ini or .txt file';
-      return;
-    }
-
-    try {
-      const content = await this.readFileContent(file);
-      this.parseIniContent(content);
-      this.fileError = '';
-    } catch (error) {
-      this.fileError = `Error reading file: ${error.message}`;
-    }
-  },
-
-      readFileContent(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        
-        // Use event.target.result instead of e.target.result
-        reader.onload = (event) => {
-          try {
-            resolve(event.target.result);
-          } catch (error) {
-            reject(error);
-          }
-        };
-        
-        // Add proper error handling
-        reader.onerror = (event) => {
-          reject(new Error(event.target.error));
+                if (!wasOpen && section !== null) {
+                    scrollManagement.scrollToSection(section);
+                }
+            }
         };
 
-        reader.readAsText(file);
-      });
-    },
+        // Methods for file handling
+        const fileHandling = {
+            loadSampleData: () => {
+                const samplePath = './parser/parser_desc_min.txt'
+                fetch(samplePath)
+                    .then(response => response.text())
+                    .then(content => {
+                        fileHandling.parseIniContent(content)
+                        uiManagement.closeDropdown()
+                    })
+                    .catch(error => {
+                        state.fileError.value = `Error loading sample data: ${error.message}`
+                    })
+            },
+            handleFileUpload: async (event) => {
+                const file = event.target.files[0]
+                if (!file) {
+                    state.fileError.value = 'No file selected'
+                    return
+                }
 
-    parseIniContent(content) {
-    try {
-      // Reset current state
-      this.parserSection = {
-        info: '',
-        name: '',
-        comment_mark: '#',
-        coor_x: 'COORX',
-        coor_y: 'COORY',
-        coor_z: 'COORZ',
-        geom_tag_point: '.',
-        geom_tag_line: '$',
-        geom_tag_poly: '@',
-        key_field: '',
-        key_unique: 'No',
-        no_data: '-1',
-        tag_field: '',
-        tagging_mode: 'none',
-        tag_strict: 'No'
-      };
-      this.fieldSections = [];
+                if (!file.name.toLowerCase().endsWith('.ini') && !file.name.toLowerCase().endsWith('.txt')) {
+                    state.fileError.value = 'Invalid file type. Please upload an .ini or .txt file'
+                    return
+                }
 
-      let currentSection = null;
-      let lines = content.split('\n');
+                try {
+                    const content = await fileHandling.readFileContent(file)
+                    fileHandling.parseIniContent(content)
+                    state.fileError.value = ''
+                } catch (error) {
+                    state.fileError.value = `Error reading file: ${error.message}`
+                }
+            },
 
-      for (let line of lines) {
-        line = line.trim();
-        
-        // Skip empty lines and comments
-        if (!line || line.startsWith('#')) continue;
+            readFileContent: (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader()
 
-        // Check for section headers
-        if (line.startsWith('[') && line.endsWith(']')) {
-          currentSection = line.slice(1, -1).toLowerCase();
-          if (currentSection === 'field') {
-            this.fieldSections.push({
-              change_case: 'lower',
-              empty_allowed: 'no',
-              info: '',
-              merge_separators: 'no',
-              name: '',
-              persistent: 'no',
-              quotation: "'",
-              skip: 'no',
-              separator: ';',
-              type: 'text',
-              unique: 'no'
-            });
-          }
-          continue;
+                    reader.onload = (event) => {
+                        try {
+                            resolve(event.target.result)
+                        } catch (error) {
+                            reject(error)
+                        }
+                    }
+
+                    reader.onerror = (event) => {
+                        reject(new Error(event.target.error))
+                    }
+
+                    reader.readAsText(file)
+                })
+            },
+
+            parseIniContent: (content) => {
+                try {
+                    // Reset current state
+                    state.parserSection.value = {
+                        info: '',
+                        name: '',
+                        comment_mark: '#',
+                        coor_x: 'COORX',
+                        coor_y: 'COORY',
+                        coor_z: 'COORZ',
+                        geom_tag_point: '.',
+                        geom_tag_line: '$',
+                        geom_tag_poly: '@',
+                        key_field: '',
+                        key_unique: 'No',
+                        no_data: '-1',
+                        tag_field: '',
+                        tagging_mode: 'none',
+                        tag_strict: 'No'
+                    }
+                    state.fieldSections.value = []
+
+                    let currentSection = null
+                    const lines = content.split('\n')
+
+                    for (let line of lines) {
+                        line = line.trim()
+
+                        if (!line || line.startsWith('#')) continue
+
+                        if (line.startsWith('[') && line.endsWith(']')) {
+                            currentSection = line.slice(1, -1).toLowerCase()
+                            if (currentSection === 'field') {
+                                state.fieldSections.value.push({
+                                    change_case: 'lower',
+                                    empty_allowed: 'no',
+                                    info: '',
+                                    merge_separators: 'no',
+                                    name: '',
+                                    persistent: 'no',
+                                    quotation: "'",
+                                    skip: 'no',
+                                    separator: ';',
+                                    type: 'text',
+                                    unique: 'no'
+                                })
+                            }
+                            continue
+                        }
+
+                        if (currentSection && line.includes('=')) {
+                            const [key, ...valueParts] = line.split('=')
+                            const trimmedKey = key.trim()
+                            const value = valueParts.join('=').trim()
+
+                            if (currentSection === 'parser') {
+                                if (trimmedKey in state.parserSection.value) {
+                                    state.parserSection.value[trimmedKey] = value
+                                }
+                            } else if (currentSection === 'field' && state.fieldSections.value.length > 0) {
+                                const currentField = state.fieldSections.value[state.fieldSections.value.length - 1]
+                                if (trimmedKey in currentField) {
+                                    currentField[trimmedKey] = value
+                                }
+                            }
+                        }
+                    }
+
+                    state.fieldSections.value.forEach((field, index) => {
+                        fieldManagement.validateField(index, field.name)
+                    })
+
+                    generateIni()
+                } catch (error) {
+                    state.fileError.value = `Error parsing INI content: ${error.message}`
+                    console.error('Error parsing INI content:', error)
+                }
+            }
         }
 
-        // Parse key-value pairs
-        if (currentSection && line.includes('=')) {
-          const [key, ...valueParts] = line.split('=');
-          const trimmedKey = key.trim();
-          const value = valueParts.join('=').trim();
+        // UI management methods
+        const uiManagement = {
+            showHelp: (section) => {
+                state.currentHelpSection.value = section
+                state.showHelpSidebar.value = true
+            },
 
-          if (currentSection === 'parser') {
-            if (trimmedKey in this.parserSection) {
-              this.parserSection[trimmedKey] = value;
+            closeHelp: () => {
+                state.showHelpSidebar.value = false
+                state.currentHelpSection.value = ''
+            },
+
+            closeToast: () => {
+                state.showToast.value = false
+            },
+
+            closeDropdown: () => {
+                state.isDropdownOpen.value = false
+            },
+
+            triggerFileUpload: () => {
+                document.querySelector('#file-upload').click()
             }
-          } else if (currentSection === 'field' && this.fieldSections.length > 0) {
-            const currentField = this.fieldSections[this.fieldSections.length - 1];
-            if (trimmedKey in currentField) {
-              currentField[trimmedKey] = value;
-            }
-          }
         }
-      }
 
-      // Validate field names after parsing
-      this.fieldSections.forEach((field, index) => {
-        this.validateField(index, field.name);
-      });
+        // INI generation and download
+        const generateIni = () => {
+            let ini = '[Parser]\n'
+            Object.entries(state.parserSection.value).forEach(([key, value]) => {
+                if (value !== '') {
+                    ini += `${key} = ${value}\n`
+                }
+            })
 
-      // Generate INI preview
-      this.generateIni();
-    } catch (error) {
-      this.fileError = `Error parsing INI content: ${error.message}`;
-      console.error('Error parsing INI content:', error);
+            state.fieldSections.value.forEach((field) => {
+                ini += '\n[Field]\n'
+                Object.entries(field).forEach(([key, value]) => {
+                    if (value !== '') {
+                        ini += `${key} = ${value}\n`
+                    }
+                })
+            })
+
+            state.generatedIni.value = ini
+        }
+
+        const downloadIni = () => {
+            const blob = new Blob([state.generatedIni.value], {
+                type: 'text/plain'
+            })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'survey2gis_parser.ini'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+        }
+
+        // Watchers
+        watch(
+            () => state.generatedIni.value,
+            () => {
+                nextTick(() => {
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        highlightElement(block)
+                    })
+                })
+            }, {
+                immediate: true
+            }
+        )
+
+        watch(
+            [() => state.parserSection.value, () => state.fieldSections.value],
+            generateIni, {
+                deep: true
+            }
+        )
+
+        // Lifecycle hooks
+        onMounted(() => {
+            const scrollContainer = document.querySelector('.code__wrapper')
+            if (scrollContainer) {
+                scrollContainer.style.overflowY = 'auto'
+                scrollContainer.style.position = 'relative'
+            }
+
+            state.showToast.value = true
+            setTimeout(() => {
+                uiManagement.closeToast()
+            }, 6000)
+
+            state.showStartLabel.value = true
+            setTimeout(() => {
+                setTimeout(() => {
+                    state.showStartLabel.value = false
+                }, 500)
+            }, 8000)
+        })
+
+        return {
+            ...state,
+            mandatoryFields,
+            isParserSectionInvalid,
+            isFormValid,
+            ...fieldManagement,
+            ...scrollManagement,
+            ...fileHandling,
+            ...fileHandling,
+            ...uiManagement,
+            generateIni,
+            downloadIni,
+            getDefaultValue: (key) => defaults[key] ? `Default: ${defaults[key]}` : ''
+        }
     }
-  }
-
-  }
 }
 </script>
-<style scoped>
-.flex { display: flex; }
-.h-screen { height: 100vh; }
-.w-1\/2 { width: 50%; }
-.prose h4 { @apply text-lg font-semibold mb-2; }
-.prose h5 { @apply font-semibold mb-1; }
-.prose ul { @apply list-disc ml-4 mb-2; }
-.prose li { @apply mb-1; }
+<style>
 
-.code__wrapper {
-  overflow-y: auto;
-  position: relative;
-  scroll-behavior: smooth;
+#right_panel {
+  background: #2d2d2d;
 }
 
-.code__field {
-  white-space: pre;
+/* Additional styling for Prism */
+.code__wrapper pre {
+  margin: 0;
+  padding: 1rem;
+}
+
+.code__wrapper pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
+/* Override some Prism theme colors if needed */
+.token.section {
+  color: #79b8ff !important;
+}
+
+.token.key {
+  color: #e1e4e8 !important;
+}
+
+.token.value {
+  color: #85e89d !important;
+}
+
+.token.comment {
+  color: #959da5 !important;
+  font-style: italic;
+}
 </style>
