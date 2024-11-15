@@ -298,20 +298,31 @@ export default {
 
         // Computed properties
 
-        const isFormValid = computed(() => {
-            const isParserValid = mandatoryFields.parser.every(field =>
-                state.parserSection.value[field] &&
-                state.parserSection.value[field].trim() !== ''
-            )
+const isFormValid = computed(() => {
+    // Check parser section
+    const isParserValid = mandatoryFields.parser.every(field =>
+        state.parserSection.value[field] &&
+        state.parserSection.value[field].trim() !== ''
+    )
 
-            const areFieldSectionsValid = state.fieldSections.value.every(field =>
-                mandatoryFields.field.every(fieldName =>
-                    field[fieldName] && field[fieldName].trim() !== ''
-                ) && !state.validationErrors.value[`field-${state.fieldSections.value.indexOf(field)}`]
-            )
+    // Check field sections including aliases
+    const areFieldSectionsValid = state.fieldSections.value.every((field, index) => {
+        // Check mandatory fields
+        const mandatoryFieldsValid = mandatoryFields.field.every(fieldName =>
+            field[fieldName] && field[fieldName].trim() !== ''
+        )
 
-            return isParserValid && areFieldSectionsValid && state.fieldSections.value.length > 0
-        })
+        // Check for any validation errors in this field section
+        const hasValidationErrors = Object.keys(state.validationErrors.value)
+            .some(key => key.startsWith(`field-${index}`))
+
+        return mandatoryFieldsValid && !hasValidationErrors
+    })
+
+    return isParserValid && areFieldSectionsValid && state.fieldSections.value.length > 0
+})
+
+
 
         const isParserSectionInvalid = () => {
             return mandatoryFields.parser.some(field =>
@@ -339,31 +350,33 @@ export default {
             },
 
             validateField: (fieldIndex, fieldName, value) => {
-        if (fieldName === 'aliases') {
-            // Clear aliases validation error if value is null (meaning it's now valid)
-            if (value === null) {
-                const newErrors = { ...state.validationErrors.value }
-                delete newErrors[`field-${fieldIndex}-aliases`]
-                state.validationErrors.value = newErrors
-            }
-            return
-        }
-
-        // Existing name validation logic
-        const errors = fieldManagement.validateFieldName(value)
-        if (errors.length > 0) {
+    if (fieldName === 'aliases') {
+        if (value) { // value here is the validation error
             state.validationErrors.value = {
                 ...state.validationErrors.value,
-                [`field-${fieldIndex}`]: errors
+                [`field-${fieldIndex}-aliases`]: value
             }
         } else {
-            const newErrors = {
-                ...state.validationErrors.value
-            }
-            delete newErrors[`field-${fieldIndex}`]
+            const newErrors = { ...state.validationErrors.value }
+            delete newErrors[`field-${fieldIndex}-aliases`]
             state.validationErrors.value = newErrors
         }
-    },
+        return
+    }
+
+    // Existing name validation logic
+    const errors = fieldManagement.validateFieldName(value)
+    if (errors.length > 0) {
+        state.validationErrors.value = {
+            ...state.validationErrors.value,
+            [`field-${fieldIndex}`]: errors
+        }
+    } else {
+        const newErrors = { ...state.validationErrors.value }
+        delete newErrors[`field-${fieldIndex}`]
+        state.validationErrors.value = newErrors
+    }
+},
 
             validateFieldName: (name) => {
                 const errors = []
@@ -817,40 +830,52 @@ const fileHandling = {
             window.URL.revokeObjectURL(url)
         }
 
-        // Watchers
-        watch(
-            () => state.generatedIni.value,
-            () => {
-                nextTick(() => {
-                    document.querySelectorAll('pre code').forEach((block) => {
-                        highlightElement(block)
-                    })
-                })
-            }, {
-                immediate: true
-            }
-        )
 
-        watch(
-            [() => state.parserSection.value, () => state.fieldSections.value],
-            generateIni, {
-                deep: true
-            }
-        )
 
         // Lifecycle hooks
         onMounted(() => {
-            const scrollContainer = document.querySelector('.code__wrapper')
-            if (scrollContainer) {
-                scrollContainer.style.overflowY = 'auto'
-                scrollContainer.style.position = 'relative'
-            }
+    const scrollContainer = document.querySelector('.code__wrapper')
+    if (scrollContainer) {
+        scrollContainer.style.overflowY = 'auto'
+        scrollContainer.style.position = 'relative'
+    }
 
-            state.showToast.value = true
-            setTimeout(() => {
-                uiManagement.closeToast()
-            }, 10000)
-        })
+    // Set up watches here
+    // Watch for syntax highlighting
+    watch(
+        () => state.generatedIni.value,
+        () => {
+            nextTick(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    highlightElement(block)
+                })
+            })
+        },
+        { immediate: true }
+    )
+
+    // Watch for content changes including validation errors
+    watch(
+        [
+            () => state.parserSection.value, 
+            () => state.fieldSections.value,
+            () => state.validationErrors.value // This will make form validation reactive to alias errors
+        ],
+        () => {
+            generateIni()
+        },
+        { deep: true }
+    )
+
+    state.showToast.value = true
+    setTimeout(() => {
+        uiManagement.closeToast()
+    }, 10000)
+})
+
+
+
+
 
         return {
             ...state,

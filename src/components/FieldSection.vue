@@ -324,36 +324,30 @@ export default {
 }
 
 const updateField = (key, value) => {
-      if (key === 'aliases') {
-        // Always update the value immediately
+    if (key === 'aliases') {
+        // Always update the value first
         const updatedField = { ...props.modelValue, [key]: value }
         emit('update:modelValue', updatedField)
 
-        // Debounce the validation
-        if (validationTimeout.value) {
-          clearTimeout(validationTimeout.value)
-        }
+        // Validate with debounce
+        if (validationTimeout.value) clearTimeout(validationTimeout.value)
         
         validationTimeout.value = setTimeout(() => {
-          const error = validateAliases(value)
-          aliasesValidationError.value = error
-          
-          // If valid, clear the validation error from the parent
-          if (!error && props.validationErrors[`field-${props.index}-aliases`]) {
-            // Emit an event to clear the validation error
-            emit('validate', props.index, 'aliases', null)
-          }
+            const error = validateAliases(value)
+            aliasesValidationError.value = error
+
+            // Emit validation result to parent
+            emit('validate', props.index, 'aliases', error)
         }, 300)
-      } else {
+    } else {
         const updatedField = { ...props.modelValue, [key]: value }
         emit('update:modelValue', updatedField)
         
         if (key === 'name') {
-          emit('validate', props.index, 'name', value)
+            emit('validate', props.index, 'name', value)
         }
-      }
     }
-
+}
     // Clean up timeout when component unmounts
     onUnmounted(() => {
       if (validationTimeout.value) {
