@@ -29,6 +29,8 @@ name = CONST1
 info = pseudo field of type double
 type = double
 value = 123.45
+@a=b
+
 
 # Index field
 [Field]
@@ -40,6 +42,7 @@ persistent = Yes
 separator = space
 merge_separators = No
 unique = Yes
+@X=y
 
 # Excavation levels
 [Field]

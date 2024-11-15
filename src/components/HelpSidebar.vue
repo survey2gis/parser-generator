@@ -7,7 +7,7 @@
     >
       <div class="w-1/2 bg-white h-full p-4 overflow-y-auto">
         <div class="flex justify-between items-center mb-1">
-          <h3 class="text-xl font-semibold">{{ title }}</h3>
+          <h1 class="text-xl font-semibold">{{ title }}</h1>
           <button @click="close" class="text-gray-500 hover:text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path d="M6 18L18 6M6 6l12 12" />
@@ -27,7 +27,7 @@
         <div class="space-y-8">
             <!-- Required Options Section -->
             <div class="border-b pb-6">
-                <h2 class="text-xl font-semibold mb-1 text-blue-600">Required Options</h2>
+                <h4 class="text-xl font-semibold mb-1 text-blue-600">Required Options</h4>
                 
                 <div class="grid gap-6">
                     <div class="bg-gray-50 p-6 rounded-lg">
@@ -110,7 +110,7 @@
 
             <!-- Optional Options Section -->
             <div>
-                <h2 class="text-xl font-semibold mb-1 text-green-600">Optional Settings</h2>
+                <h4 class="text-xl font-semibold mb-1 text-green-600">Optional Settings</h4>
                 
                 <div class="grid gap-6">
                     <div class="bg-gray-50 p-6 rounded-lg">
@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">No Data Value</h3>
+                        <h4 class="font-semibold text-gray-800 text-lg">No Data Value</h4>
                         <div class="mt-3 space-y-3">
                             <p class="text-gray-600">Specifies an integer value to represent null or missing data in your attributes. This value should be unique and not appear in valid data.</p>
                             
@@ -144,7 +144,7 @@
                     </div>
 
                     <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Tag Strict Mode</h3>
+                        <h4 class="font-semibold text-gray-800 text-lg">Tag Strict Mode</h4>
                         <div class="mt-3 space-y-3">
                             <p class="text-gray-600">Controls how strictly the parser enforces geometry tagging rules. When enabled, every measurement must contain a valid geometry tag or it will be discarded.</p>
                             
@@ -160,7 +160,7 @@
         </div>
 
         <div class="mt-8 p-6 bg-blue-50 rounded-lg">
-            <h3 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h3>
+            <h4 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h4>
             <ul class="list-disc list-inside space-y-1 text-blue-700">
                 <li>All geometry tags must be unique and not overlap with other special characters</li>
                 <li>Coordinate fields must be numeric and of type "double"</li>
@@ -203,6 +203,12 @@
                     nicht für Fahrlässigkeit. Eine Haftung für mittelbare Schäden oder die 
                     Wiederbeschaffung von Daten wird ausgeschlossen.
                 </li>
+                <li>
+                    Die Seite verwendet keine Cookies.
+                </li>
+                <li>
+                    Es werden keine Daten serverseitig verarbeitet oder gespeichert.
+                </li>
             </ol>
         </div>
 
@@ -212,6 +218,7 @@
             <ul class="space-y-1 text-gray-600">
                 <li>Jonas Abele</li>
                 <li>Claus Brenner</li>
+                <li>José Canalejo</li>
                 <li>Toni Schönbuchner</li>
             </ul>
         </div>
@@ -237,7 +244,7 @@
 
                 <!-- Quick Start -->
                 <div class="bg-blue-50 rounded-lg p-6 mb-8">
-                <h2 class="text-xl font-semibold text-blue-900 mb-4">🚀 Quick Start</h2>
+                <h4 class="text-xl font-semibold text-blue-900 mb-4">🚀 Quick Start</h4>
                 <ol class="space-y-2 text-blue-900">
                     <li>1. Start with the <span class="font-semibold">Parser Section</span> at the top</li>
                     <li>2. Fill in the required fields (marked with <span class="text-red-500">*</span>)</li>
@@ -248,11 +255,11 @@
 
                 <!-- Required Settings -->
                 <div class="mb-8">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Required Settings</h2>
+                <h4 class="text-xl font-semibold text-gray-900 mb-4">Required Settings</h4>
 
                 <!-- Parser Section -->
                 <div class="bg-white shadow rounded-lg p-6 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">⚙️ Parser Section</h3>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">⚙️ Parser Section</h4>
                     <p class="text-gray-600 mb-2">These fields must be filled out:</p>
                     <ul class="space-y-2 text-gray-700">
                     <li class="flex items-start">
@@ -272,7 +279,7 @@
 
                 <!-- Field Sections -->
                 <div class="bg-white shadow rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">📝 Field Sections</h3>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">📝 Field Sections</h4>
                     <p class="text-gray-600 mb-3">For each field you need to specify:</p>
                     <div class="space-y-4">
                     <div>
@@ -293,11 +300,11 @@
 
                 <!-- Common Tasks -->
                 <div class="mb-8">
-                <h2 class="text-xl font-semibold text-gray-900 mb-4">Common Tasks</h2>
+                <h4 class="text-xl font-semibold text-gray-900 mb-4">Common Tasks</h4>
                 
                 <!-- Creating Fields -->
                 <div class="bg-white shadow rounded-lg p-6 mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Creating a New Field</h3>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Creating a New Field</h4>
                     <ol class="space-y-2 text-gray-600">
                     <li>1. Click the "Add Field Section" button</li>
                     <li>2. Fill in the required Name and Type</li>
@@ -306,12 +313,67 @@
                 </div>
         </div>
 
+
+
+            <!-- Parser Modes Section -->
+            <div class="mt-12">
+                <h4 class="text-xl font-semibold mb-3 text-green-600">Parser Modes</h4>
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-1">Understanding Geometry Processing</h4>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-medium text-gray-700">Key Limitations</h4>
+                            <ul class="list-disc list-inside text-gray-600 ml-4">
+                                <li>Vertices of a single geometry must be in one file</li>
+                                <li>Vertex measurements can only be interrupted by comments/empty lines</li>
+                                <li>Available geometry types: point, line, polygon</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-medium text-gray-700">Geometry Markers</h4>
+                            <ul class="list-disc list-inside text-gray-600 ml-4">
+                                <li>Use special characters (e.g., @, $) to mark geometry types</li>
+                                <li>Can be separate fields or added to existing fields</li>
+                                <li>Must be declared in "tag field" option</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 class="font-medium text-gray-700">Important Notes</h4>
+                            <ul class="list-disc list-inside text-gray-600 ml-4">
+                                <li>Polygons are automatically closed - no need for duplicate vertices</li>
+                                <li>Key field values are case-sensitive</li>
+                                <li>Only one parser mode can be used per schema</li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+
+                         <!-- Important Notes Section -->
+                         <div class="mt-8 p-6 bg-blue-50 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h4>
+                            <ul class="list-disc list-inside space-y-1 text-blue-700">
+                                <li>Field names are limited to 10 characters and specific valid characters</li>
+                                <li>Separator characters must be unique and not overlap with other special characters</li>
+                                <li>Empty fields may not work correctly with whitespace separators</li>
+                                <li>Text replacement only works on exact matches of field content</li>
+                                <li>Parser modes affect how geometry markers and key fields are interpreted</li>
+                            </ul>
+                        </div>
+
+                </div>
+            </div>
+        </div>
+
         <!-- Field Section Help Content -->
         <div v-if="section === 'field'" class="prose prose-sm">
           
           <div class="grid gap-6">
                 <div class="bg-gray-50 p-6 rounded-lg">
-                    <h3 class="font-semibold text-gray-800 text-lg">Required Field Options</h3>
+                    <h4 class="font-semibold text-gray-800 text-lg">Required Field Options</h4>
                     <div class="mt-3 space-y-4">
                         <div>
                             <h4 class="font-medium text-gray-700">name (Required)</h4>
@@ -399,61 +461,6 @@
                 </div>
             </div>
         </div>
-
-            <!-- Parser Modes Section -->
-            <div class="mt-12">
-                <h2 class="text-xl font-semibold mb-3 text-green-600">Parser Modes</h2>
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h3 class="font-semibold text-gray-800 mb-1">Understanding Geometry Processing</h3>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="font-medium text-gray-700">Key Limitations</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Vertices of a single geometry must be in one file</li>
-                                <li>Vertex measurements can only be interrupted by comments/empty lines</li>
-                                <li>Available geometry types: point, line, polygon</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">Geometry Markers</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Use special characters (e.g., @, $) to mark geometry types</li>
-                                <li>Can be separate fields or added to existing fields</li>
-                                <li>Must be declared in "tag field" option</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">Important Notes</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Polygons are automatically closed - no need for duplicate vertices</li>
-                                <li>Key field values are case-sensitive</li>
-                                <li>Only one parser mode can be used per schema</li>
-                            </ul>
-                        </div>
-
-
-                    </div>
-
-                         <!-- Important Notes Section -->
-                         <div class="mt-8 p-6 bg-blue-50 rounded-lg">
-                            <h3 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h3>
-                            <ul class="list-disc list-inside space-y-1 text-blue-700">
-                                <li>Field names are limited to 10 characters and specific valid characters</li>
-                                <li>Separator characters must be unique and not overlap with other special characters</li>
-                                <li>Empty fields may not work correctly with whitespace separators</li>
-                                <li>Text replacement only works on exact matches of field content</li>
-                                <li>Parser modes affect how geometry markers and key fields are interpreted</li>
-                            </ul>
-                        </div>
-
-                </div>
-            </div>
-        </div>
-
-
 
         </div>
       </div>

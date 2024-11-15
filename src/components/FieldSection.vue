@@ -195,6 +195,31 @@
                 placeholder=";"
               />
             </div>
+
+            <div class="col-span-2 mb-2">
+  <div class="flex justify-between items-center">
+    <label class="text-xs font-medium text-gray-700">Aliases</label>
+    <span class="text-xs text-gray-400">Optional</span>
+  </div>
+  <textarea
+    :value="modelValue.aliases"
+    @input="updateField('aliases', $event.target.value)"
+    class="w-full border rounded p-1 text-sm font-mono"
+    :class="{
+      'border-red-500': aliasesValidationError || validationErrors[`field-${index}-aliases`]
+    }"
+    rows="4"
+    placeholder="@key=value&#10;@key2=value2&#10;@key3=value3"
+    spellcheck="false"
+  ></textarea>
+  <p v-if="aliasesValidationError || validationErrors[`field-${index}-aliases`]" 
+     class="text-xs text-red-500 mt-1">
+    {{ aliasesValidationError || validationErrors[`field-${index}-aliases`] }}
+  </p>
+  <p class="text-xs text-gray-500 mt-1">
+    Add one alias per line using the format @key=value
+  </p>
+</div>
           </div>
         </div>
       </div>
@@ -202,76 +227,161 @@
   </template>
   
   <script>
-  import { computed } from 'vue'
+import { computed, ref, onUnmounted } from 'vue'
+
+export default {
+  name: 'FieldSection',
   
-  export default {
-    name: 'FieldSection',
-    
-    props: {
-      modelValue: {
-        type: Object,
-        required: true,
-        default: () => ({
-          change_case: 'lower',
-          empty_allowed: 'no',
-          info: '',
-          merge_separators: 'no',
-          name: '',
-          persistent: 'no',
-          quotation: "'",
-          skip: 'no',
-          separator: ';',
-          type: 'text',
-          unique: 'no'
-        })
-      },
-      index: {
-        type: Number,
-        required: true
-      },
-      isOpen: {
-        type: Boolean,
-        default: false
-      },
-      validationErrors: {
-        type: Object,
-        default: () => ({})
-      },
-      mandatoryFields: {
-        type: Array,
-        default: () => ['name', 'type']
-      }
+  props: {
+    modelValue: {
+      type: Object,
+      required: true,
+      default: () => ({
+        change_case: 'lower',
+        empty_allowed: 'no',
+        info: '',
+        merge_separators: 'no',
+        name: '',
+        persistent: 'no',
+        quotation: "'",
+        skip: 'no',
+        separator: ';',
+        type: 'text',
+        unique: 'no',
+        aliases: ''
+      })
     },
-  
-    emits: ['update:modelValue', 'remove', 'toggle-section', 'help', 'validate'],
-  
-    setup(props, { emit }) {
-      const isFieldSectionInvalid = computed(() => {
-        // Check for validation errors
-        if (props.validationErrors[`field-${props.index}`]) {
-          return true
+    index: {
+      type: Number,
+      required: true
+    },
+    isOpen: {
+      type: Boolean,
+      default: false
+    },
+    validationErrors: {
+      type: Object,
+      default: () => ({})
+    },
+    mandatoryFields: {
+      type: Array,
+      default: () => ['name', 'type']
+    }
+  },
+
+  emits: ['update:modelValue', 'remove', 'toggle-section', 'help', 'validate'],
+
+  setup(props, { emit }) {
+    const aliasesValidationError = ref('')
+    const validationTimeout = ref(null)
+
+    const validateAliases = (value) => {
+  if (!value) return null // Empty is valid as it's optional
+
+  const lines = value.split('\n').filter(line => line.trim())
+  const keys = new Set()
+  const lowercaseKeys = new Set()
+
+  for (const line of lines) {
+    // Skip empty lines
+    if (!line.trim()) continue
+
+    // Check basic format
+    if (!line.startsWith('@')) {
+      return 'Each line must start with @'
+    }
+
+    // Split into key and value, preserving original spacing
+    const [keyPart, ...valueParts] = line.substring(1).split('=')
+    const key = keyPart.trim()
+    const value = valueParts.join('=').trim()
+    
+    if (!key || !value) {
+      return 'Each line must be in format @key=value'
+    }
+
+    // Only check for internal spaces in key and value
+    const specialCharsRegex = /[^a-zA-Z0-9_]/
+    if (specialCharsRegex.test(key) || specialCharsRegex.test(value)) {
+      return 'Keys and values can only contain letters, numbers, and underscores'
+    }
+
+    // Check for duplicate keys (case-sensitive)
+    if (keys.has(key)) {
+      return `Duplicate key found: ${key}`
+    }
+    keys.add(key)
+
+    // Check for duplicate keys (case-insensitive)
+    const lowercaseKey = key.toLowerCase()
+    if (lowercaseKeys.has(lowercaseKey) && !keys.has(key)) {
+      return `Case-insensitive duplicate key found: ${key}`
+    }
+    lowercaseKeys.add(lowercaseKey)
+  }
+
+  return null // No validation errors
+}
+
+const updateField = (key, value) => {
+      if (key === 'aliases') {
+        // Always update the value immediately
+        const updatedField = { ...props.modelValue, [key]: value }
+        emit('update:modelValue', updatedField)
+
+        // Debounce the validation
+        if (validationTimeout.value) {
+          clearTimeout(validationTimeout.value)
         }
         
-        // Check mandatory fields
-        return props.mandatoryFields.some(fieldName => 
-          !props.modelValue[fieldName] || props.modelValue[fieldName].trim() === ''
-        )
-      })
-  
-      const updateField = (key, value) => {
+        validationTimeout.value = setTimeout(() => {
+          const error = validateAliases(value)
+          aliasesValidationError.value = error
+          
+          // If valid, clear the validation error from the parent
+          if (!error && props.validationErrors[`field-${props.index}-aliases`]) {
+            // Emit an event to clear the validation error
+            emit('validate', props.index, 'aliases', null)
+          }
+        }, 300)
+      } else {
         const updatedField = { ...props.modelValue, [key]: value }
         emit('update:modelValue', updatedField)
         
-        // Trigger validation for name field
         if (key === 'name') {
-          emit('validate', props.index, value)
+          emit('validate', props.index, 'name', value)
         }
       }
-  
-      return {
-        isFieldSectionInvalid,
-        updateField
+    }
+
+    // Clean up timeout when component unmounts
+    onUnmounted(() => {
+      if (validationTimeout.value) {
+        clearTimeout(validationTimeout.value)
       }
+    })
+
+    const isFieldSectionInvalid = computed(() => {
+  // Check for aliases validation errors
+  const hasAliasesError = aliasesValidationError.value || 
+                         props.validationErrors[`field-${props.index}-aliases`]
+  
+  // Check for existing validation errors
+  const hasExistingErrors = props.validationErrors[`field-${props.index}`]
+  
+  // Check mandatory fields
+  const hasMissingMandatory = props.mandatoryFields.some(fieldName => 
+    !props.modelValue[fieldName] || props.modelValue[fieldName].trim() === ''
+  )
+
+  return hasAliasesError || hasExistingErrors || hasMissingMandatory
+})
+
+    return {
+      isFieldSectionInvalid,
+      updateField,
+      aliasesValidationError
     }
   }
+}
   </script>

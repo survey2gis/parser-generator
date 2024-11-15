@@ -7,87 +7,102 @@
       <h1 class="text-lg font-semibold"><i class="pi pi-bullseye me-3 text-black-500"></i><a href="/">Survey2GIS Parser Generator</a></h1>
   
       <!-- menu -->
-      <div class="flex items-center gap-6">
+      <!-- Inside your navigation menu div -->
+        <div class="flex items-center gap-6">
+
+
         <!-- Import Options Dropdown -->
+
+
         <div class="relative" v-click-outside="closeDropdown">
-          <button
-            @click="isDropdownOpen = !isDropdownOpen"
-            class="px-4 py-2 border border-gray-300 rounded-lg flex items-center gap-2 bg-white hover:bg-gray-50 w-full transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <span class="text-gray-700 font-medium">Select Import Option</span>
-            <i 
-              class="pi pi-chevron-down text-gray-500 transition-transform duration-200"
-              :class="{'rotate-180': isDropdownOpen}"
-            ></i>
-          </button>
+  <button
+    @click="isDropdownOpen = !isDropdownOpen"
+    class="px-4 py-2 border border-gray-300 flex items-center gap-2 bg-white hover:bg-gray-50 w-full transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+  >
+    <span class="text-gray-700 font-medium px-2">{{ $t('navigation.loadParser') }}</span>
+    <i 
+      class="pi pi-chevron-down text-gray-500 transition-transform duration-200"
+      :class="{'rotate-180': isDropdownOpen}"
+    ></i>
+  </button>
 
-          <div 
-            v-if="isDropdownOpen"
-            class="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-full overflow-hidden"
-          >
-            <div class="py-1">
-              <label 
-                for="file-upload" 
-                class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
-                @click.prevent="triggerFileUpload"
-              >
-                <i class="pi pi-upload text-blue-600 me-3"></i>
-                <span class="text-gray-700">Upload parser file</span>
-              </label>
-              
-              <button
-                class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
-                @click="loadSampleData"
-              >
-                <i class="pi pi-cloud-download text-blue-600 me-3"></i>
-                <span class="text-gray-700">Load sample data</span>
-              </button>
-            </div>
-          </div>
+    <!-- Dropdown Menu -->
+    <div 
+        v-if="isDropdownOpen"
+        class="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-full overflow-hidden"
+    >
+        <div class="py-1">
+        <label 
+            for="file-upload" 
+            class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
+            :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
+            @click.prevent="uploadisDisabled && triggerFileUpload"
+        >
+            <i class="pi pi-upload text-blue-600 me-3"></i>
+            <span class="text-gray-700">{{ $t('navigation.uploadParser') }}</span>
+        </label>
+        
+        <button
+            class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+            :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
 
-          <input
-            type="file"
-            accept=".ini,.txt"
-            @change="handleFileUpload"
-            class="hidden"
-            ref="fileInput"
-            id="file-upload"
-          />
+            @click="uploadisDisabled && loadSampleData"
+        >
+            <i class="pi pi-cloud-download text-blue-600 me-3"></i>
+            <span class="text-gray-700">{{ $t('navigation.loadSample') }}</span>
+        </button>
         </div>
+    </div>
+
+    <input
+        type="file"
+        accept=".ini,.txt"
+        @change="handleFileUpload"
+        class="hidden"
+        ref="fileInput"
+        id="file-upload"
+    />
+    </div>
 
         <!-- Download Button -->
         <button
-          @click="downloadIni"
-          :disabled="!isFormValid"
-          class="py-2 px-4 rounded-lg flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
-          :class="isFormValid 
+            @click="downloadIni"
+            :disabled="!isFormValid"
+            class="py-2 px-4 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+            :class="isFormValid 
             ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm focus:ring-green-500' 
             : 'bg-gray-100 border border-gray-300 text-gray-400 cursor-not-allowed'"
         >
-          <i class="pi pi-download"></i>
-          <span>Download parser file</span>
+            <i class="pi pi-download"></i>
+            <span>{{ $t('navigation.download') }}</span>
         </button>
 
-        <!-- Divider -->
-        <div class="h-6 w-px bg-gray-300 mx-2"></div>
+                <!-- Language Selector -->
+            <select
+                v-model="$i18n.locale"
+                class="px-3 py-2 border border-gray-300  bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <option value="en">En</option>
+            <option value="de">De</option>
+        </select>
 
         <!-- Help Links -->
         <div class="flex items-center gap-4">
-          <button 
+            <button 
             @click.stop="showHelp('imprint')" 
             class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
-          >
-            Imprint
-          </button>
+            >
+            {{ $t('navigation.imprint') }}
+            </button>
 
-          <button 
+            <button 
             @click.stop="showHelp('help')" 
             class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
-          >
-            Help
-          </button>
+            >
+            {{ $t('navigation.help') }}
+            </button>
         </div>
-      </div>
+        </div>
 
     </div>
 </div>
@@ -96,23 +111,19 @@
     <div class="flex flex-1 overflow-hidden">
       <!-- Left Panel -->
       <div class="w-1/2 p-4 bg-gray-100 overflow-auto left-panel ps-6 pe-6 pt-6" id="left_panel">
-        <!-- Error Message -->
-        <div v-if="fileError" class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-          <div class="flex items-center">
-            <span class="mr-2">⚠️</span>
-            <span>{{ fileError }}</span>
-          </div>
-        </div>
+
 
         <!-- Parser Section Card -->
-      <ParserSection
-        v-model="parserSection"
-        :mandatory-fields="mandatoryFields.parser"
-        :is-open="openSection === 'parser'"
-        :show-start-label="showStartLabel"
-        @toggle-section="toggleSection"
-        @help="showHelp"
-      />
+        <ParserSection
+          v-model="parserSection"
+          :mandatory-fields="mandatoryFields.parser"
+          :is-open="openSection === 'parser'"
+          :show-start-label="showStartLabel"
+          :started="hasStarted" 
+          @toggle-section="toggleSection"
+          @help="showHelp"
+          @started="hasStarted = true"
+        />
 
         <!-- Field Sections -->
           <template v-for="(field, index) in fieldSections" :key="index">
@@ -129,8 +140,11 @@
               />
           </template>
 
-        <!-- Add Field Button at the bottom -->
-          <AddFieldButton @add="addFieldSection" />
+        <!-- Add Field Button -->
+        <AddFieldButton 
+          v-if="hasStarted"
+          @add="addFieldSection"
+        />
       </div>
 
       <!-- Right Panel -->
@@ -154,7 +168,7 @@
   />
 
   </div>
-      <!-- Toast Notification -->
+      <!-- guid Notification -->
       <div
       v-if="showToast"
       class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 max-w-md border border-gray-200 transform transition-all duration-500 ease-in-out z-50"
@@ -163,7 +177,14 @@
       <div class="flex items-start">
         <div class="flex-1 mr-4">
           <p class="text-gray-900">
-            👋 Welcome! Take a quick tour through our help guide - you'll find it in the top right corner.
+            👋 Welcome! New here? Start  
+            <a 
+              href="#" 
+              @click.prevent="showHelp('help')" 
+              class="text-blue-600 hover:text-blue-800 underline cursor-pointer"
+            >
+              here
+            </a> 
           </p>
         </div>
         <button
@@ -184,6 +205,7 @@ import HelpSidebar from './components/HelpSidebar.vue'
 import ParserSection from './components/ParserSection.vue'
 import FieldSection from './components/FieldSection.vue'
 import AddFieldButton from './components/AddFieldButton.vue'
+import { useI18n } from 'vue-i18n'
 import {
     ref,
     watch,
@@ -212,6 +234,10 @@ export default {
     },
 
     setup() {
+        const hasStarted = ref(false);
+        const { t } = useI18n()
+        const uploadisDisabled = ref(true)
+
         // State management using refs
         const state = {
             parserSection: ref({
@@ -229,7 +255,8 @@ export default {
                 no_data: '-1',
                 tag_field: '',
                 tagging_mode: 'none',
-                tag_strict: 'No'
+                tag_strict: 'No',
+                hasStarted: ref(false)
             }),
             fieldSections: ref([]),
             validationErrors: ref({}),
@@ -238,16 +265,22 @@ export default {
             currentHelpSection: ref(''),
             showStartLabel: ref(true),
             isDropdownOpen: ref(false),
-            generatedIni: ref('# preview of parser file'),
+            generatedIni: ref(`# ${t('parser.code_comment')}`),
             fileError: ref(''),
             showTooltip: ref(null),
             openFieldIndex: ref(null),
             showToast: ref(false)
         }
 
+        watch(() => t('parser.code_comment'), (newComment) => {
+            if (!state.generatedIni.value.includes('=')) {  // Only update if it's still the initial comment
+                state.generatedIni.value = `# ${newComment}`
+            }
+        })
+
         // Constants
         const mandatoryFields = {
-            parser: ['name', 'coor_x', 'coor_y'],
+            parser: ['name', 'coor_x', 'coor_y', 'coor_z'],
             field: ['name', 'type']
         }
 
@@ -287,6 +320,8 @@ export default {
             )
         }
 
+        
+
 
 
         // Methods for field management
@@ -303,21 +338,32 @@ export default {
                 )
             },
 
-            validateField: (fieldIndex, name) => {
-                const errors = fieldManagement.validateFieldName(name)
-                if (errors.length > 0) {
-                    state.validationErrors.value = {
-                        ...state.validationErrors.value,
-                        [`field-${fieldIndex}`]: errors
-                    }
-                } else {
-                    const newErrors = {
-                        ...state.validationErrors.value
-                    }
-                    delete newErrors[`field-${fieldIndex}`]
-                    state.validationErrors.value = newErrors
-                }
-            },
+            validateField: (fieldIndex, fieldName, value) => {
+        if (fieldName === 'aliases') {
+            // Clear aliases validation error if value is null (meaning it's now valid)
+            if (value === null) {
+                const newErrors = { ...state.validationErrors.value }
+                delete newErrors[`field-${fieldIndex}-aliases`]
+                state.validationErrors.value = newErrors
+            }
+            return
+        }
+
+        // Existing name validation logic
+        const errors = fieldManagement.validateFieldName(value)
+        if (errors.length > 0) {
+            state.validationErrors.value = {
+                ...state.validationErrors.value,
+                [`field-${fieldIndex}`]: errors
+            }
+        } else {
+            const newErrors = {
+                ...state.validationErrors.value
+            }
+            delete newErrors[`field-${fieldIndex}`]
+            state.validationErrors.value = newErrors
+        }
+    },
 
             validateFieldName: (name) => {
                 const errors = []
@@ -342,7 +388,8 @@ export default {
                     skip: 'no',
                     separator: ';',
                     type: 'text',
-                    unique: 'no'
+                    unique: 'no',
+                    aliases: ''
                 }
                 state.fieldSections.value.push(newField)
                 state.openSection.value = state.fieldSections.value.length - 1
@@ -454,139 +501,233 @@ export default {
         };
 
         // Methods for file handling
-        const fileHandling = {
-            loadSampleData: () => {
-                const samplePath = './parser/parser_desc_min.txt'
-                fetch(samplePath)
-                    .then(response => response.text())
-                    .then(content => {
-                        fileHandling.parseIniContent(content)
-                        uiManagement.closeDropdown()
-                    })
-                    .catch(error => {
-                        state.fileError.value = `Error loading sample data: ${error.message}`
-                    })
-            },
-            handleFileUpload: async (event) => {
-                const file = event.target.files[0]
-                if (!file) {
-                    state.fileError.value = 'No file selected'
-                    return
-                }
+// In App.vue
+const fileHandling = {
+    // Helper function for alias validation (inside fileHandling)
+    validateAliases: (aliases) => {
+        if (!aliases) return null // Empty is valid
 
-                if (!file.name.toLowerCase().endsWith('.ini') && !file.name.toLowerCase().endsWith('.txt')) {
-                    state.fileError.value = 'Invalid file type. Please upload an .ini or .txt file'
-                    return
-                }
+        const lines = aliases.split('\n').filter(line => line.trim())
+        const keys = new Set()
+        const lowercaseKeys = new Set()
 
+        for (const line of lines) {
+            if (!line.startsWith('@')) {
+                return 'Each line must start with @'
+            }
+
+            const [keyPart, ...valueParts] = line.substring(1).split('=')
+            const key = keyPart.trim()
+            const value = valueParts.join('=').trim()
+            
+            if (!key || !value) {
+                return 'Each line must be in format @key=value'
+            }
+
+            // Check for special characters and German umlauts
+            const specialCharsRegex = /[^a-zA-Z0-9_]/
+            if (specialCharsRegex.test(key) || specialCharsRegex.test(value)) {
+                return 'Keys and values can only contain letters, numbers, and underscores'
+            }
+
+            // Check for duplicate keys (case-sensitive)
+            if (keys.has(key)) {
+                return `Duplicate key found: ${key}`
+            }
+            keys.add(key)
+
+            // Check for duplicate keys (case-insensitive)
+            const lowercaseKey = key.toLowerCase()
+            if (lowercaseKeys.has(lowercaseKey) && !keys.has(key)) {
+                return `Case-insensitive duplicate key found: ${key}`
+            }
+            lowercaseKeys.add(lowercaseKey)
+        }
+
+        return null // No validation errors
+    },
+
+    loadSampleData: () => {
+        const samplePath = './parser/parser_desc_min.txt'
+        fetch(samplePath)
+            .then(response => response.text())
+            .then(content => {
+                fileHandling.parseIniContent(content)
+                uiManagement.closeDropdown()
+            })
+            .catch(error => {
+                state.fileError.value = `Error loading sample data: ${error.message}`
+            })
+    },
+
+    handleFileUpload: async (event) => {
+        const file = event.target.files[0]
+        if (!file) {
+            state.fileError.value = 'No file selected'
+            return
+        }
+
+        if (!file.name.toLowerCase().endsWith('.ini') && !file.name.toLowerCase().endsWith('.txt')) {
+            state.fileError.value = 'Invalid file type. Please upload an .ini or .txt file'
+            return
+        }
+
+        try {
+            const content = await fileHandling.readFileContent(file)
+            fileHandling.parseIniContent(content)
+            state.fileError.value = ''
+        } catch (error) {
+            state.fileError.value = `Error reading file: ${error.message}`
+        }
+    },
+
+    readFileContent: (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+
+            reader.onload = (event) => {
                 try {
-                    const content = await fileHandling.readFileContent(file)
-                    fileHandling.parseIniContent(content)
-                    state.fileError.value = ''
+                    resolve(event.target.result)
                 } catch (error) {
-                    state.fileError.value = `Error reading file: ${error.message}`
-                }
-            },
-
-            readFileContent: (file) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader()
-
-                    reader.onload = (event) => {
-                        try {
-                            resolve(event.target.result)
-                        } catch (error) {
-                            reject(error)
-                        }
-                    }
-
-                    reader.onerror = (event) => {
-                        reject(new Error(event.target.error))
-                    }
-
-                    reader.readAsText(file)
-                })
-            },
-
-            parseIniContent: (content) => {
-                try {
-                    // Reset current state
-                    state.parserSection.value = {
-                        info: '',
-                        name: '',
-                        comment_mark: '#',
-                        coor_x: 'COORX',
-                        coor_y: 'COORY',
-                        coor_z: 'COORZ',
-                        geom_tag_point: '.',
-                        geom_tag_line: '$',
-                        geom_tag_poly: '@',
-                        key_field: '',
-                        key_unique: 'No',
-                        no_data: '-1',
-                        tag_field: '',
-                        tagging_mode: 'none',
-                        tag_strict: 'No'
-                    }
-                    state.fieldSections.value = []
-
-                    let currentSection = null
-                    const lines = content.split('\n')
-
-                    for (let line of lines) {
-                        line = line.trim()
-
-                        if (!line || line.startsWith('#')) continue
-
-                        if (line.startsWith('[') && line.endsWith(']')) {
-                            currentSection = line.slice(1, -1).toLowerCase()
-                            if (currentSection === 'field') {
-                                state.fieldSections.value.push({
-                                    change_case: 'lower',
-                                    empty_allowed: 'no',
-                                    info: '',
-                                    merge_separators: 'no',
-                                    name: '',
-                                    persistent: 'no',
-                                    quotation: "'",
-                                    skip: 'no',
-                                    separator: ';',
-                                    type: 'text',
-                                    unique: 'no'
-                                })
-                            }
-                            continue
-                        }
-
-                        if (currentSection && line.includes('=')) {
-                            const [key, ...valueParts] = line.split('=')
-                            const trimmedKey = key.trim()
-                            const value = valueParts.join('=').trim()
-
-                            if (currentSection === 'parser') {
-                                if (trimmedKey in state.parserSection.value) {
-                                    state.parserSection.value[trimmedKey] = value
-                                }
-                            } else if (currentSection === 'field' && state.fieldSections.value.length > 0) {
-                                const currentField = state.fieldSections.value[state.fieldSections.value.length - 1]
-                                if (trimmedKey in currentField) {
-                                    currentField[trimmedKey] = value
-                                }
-                            }
-                        }
-                    }
-
-                    state.fieldSections.value.forEach((field, index) => {
-                        fieldManagement.validateField(index, field.name)
-                    })
-
-                    generateIni()
-                } catch (error) {
-                    state.fileError.value = `Error parsing INI content: ${error.message}`
-                    console.error('Error parsing INI content:', error)
+                    reject(error)
                 }
             }
+
+            reader.onerror = (event) => {
+                reject(new Error(event.target.error))
+            }
+
+            reader.readAsText(file)
+        })
+    },
+
+    parseIniContent: (content) => {
+        try {
+            // Reset current state
+            state.parserSection.value = {
+                info: '',
+                name: '',
+                comment_mark: '#',
+                coor_x: 'COORX',
+                coor_y: 'COORY',
+                coor_z: 'COORZ',
+                geom_tag_point: '.',
+                geom_tag_line: '$',
+                geom_tag_poly: '@',
+                key_field: '',
+                key_unique: 'No',
+                no_data: '-1',
+                tag_field: '',
+                tagging_mode: 'none',
+                tag_strict: 'No'
+            }
+            state.fileError.value = '' // Clear any previous global errors
+            state.validationErrors.value = {} // Reset validation errors
+
+            hasStarted.value = true
+            state.openSection.value = 'parser'
+
+            let currentSection = null
+            let currentAliases = []
+            let currentFieldIndex = -1
+            const lines = content.split('\n')
+
+            for (let line of lines) {
+                line = line.trim()
+
+                if (!line || line.startsWith('#')) continue
+
+                // Handle new section
+                if (line.startsWith('[') && line.endsWith(']')) {
+                    // Process aliases for the previous field section before moving to new section
+                    if (currentSection === 'field' && currentAliases.length > 0 && 
+                        state.fieldSections.value.length > 0) {
+                        const currentField = state.fieldSections.value[state.fieldSections.value.length - 1]
+                        const aliasesString = currentAliases.join('\n')
+                        
+                        // Validate aliases before assigning
+                        const validationError = fileHandling.validateAliases(aliasesString)
+                        if (validationError) {
+                            state.validationErrors.value[`field-${currentFieldIndex}-aliases`] = validationError
+                        }
+                        currentField.aliases = aliasesString
+                    }
+                    
+                    currentSection = line.slice(1, -1).toLowerCase()
+                    currentAliases = [] // Reset aliases for new section
+                    
+                    if (currentSection === 'field') {
+                        currentFieldIndex++
+                        state.fieldSections.value.push({
+                            change_case: 'lower',
+                            empty_allowed: 'no',
+                            info: '',
+                            merge_separators: 'no',
+                            name: '',
+                            persistent: 'no',
+                            quotation: "'",
+                            skip: 'no',
+                            separator: ';',
+                            type: 'text',
+                            unique: 'no',
+                            aliases: ''
+                        })
+                    }
+                    continue
+                }
+
+                // Handle line content
+                if (currentSection) {
+                    if (line.startsWith('@')) {
+                        // This is an alias line
+                        currentAliases.push(line)
+                    } else if (line.includes('=')) {
+                        // This is a regular property
+                        const [key, ...valueParts] = line.split('=')
+                        const trimmedKey = key.trim()
+                        const value = valueParts.join('=').trim()
+
+                        if (currentSection === 'parser') {
+                            if (trimmedKey in state.parserSection.value) {
+                                state.parserSection.value[trimmedKey] = value
+                            }
+                        } else if (currentSection === 'field' && state.fieldSections.value.length > 0) {
+                            const currentField = state.fieldSections.value[state.fieldSections.value.length - 1]
+                            if (trimmedKey in currentField) {
+                                currentField[trimmedKey] = value
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Don't forget to process aliases for the last field section
+            if (currentSection === 'field' && currentAliases.length > 0 && 
+            state.fieldSections.value.length > 0) {
+            const currentField = state.fieldSections.value[state.fieldSections.value.length - 1]
+            const aliasesString = currentAliases.join('\n')
+            
+            // Validate aliases before assigning
+            const validationError = fileHandling.validateAliases(aliasesString)
+            if (validationError) {
+                // Instead of setting fileError, set it in validationErrors
+                state.validationErrors.value[`field-${currentFieldIndex}-aliases`] = [validationError]
+            }
+            currentField.aliases = aliasesString
         }
+
+            // Validate field names
+            state.fieldSections.value.forEach((field, index) => {
+                fieldManagement.validateField(index, field.name)
+            })
+
+            generateIni()
+        } catch (error) {
+        state.fileError.value = `Error parsing INI content: ${error.message}`
+        console.error('Error parsing INI content:', error)
+    }
+    }
+}
 
         // UI management methods
         const uiManagement = {
@@ -615,24 +756,52 @@ export default {
 
         // INI generation and download
         const generateIni = () => {
-            let ini = '[Parser]\n'
-            Object.entries(state.parserSection.value).forEach(([key, value]) => {
-                if (value !== '') {
-                    ini += `${key} = ${value}\n`
-                }
-            })
+    let ini = '[Parser]\n'
+    
+    // Add parser section properties
+    const parserEntries = Object.entries(state.parserSection.value)
+        .filter(([value]) => value !== '')
+        .map(([key, value]) => `${key} = ${value}`)
+        .join('\n')
+    ini += parserEntries
 
-            state.fieldSections.value.forEach((field) => {
-                ini += '\n[Field]\n'
-                Object.entries(field).forEach(([key, value]) => {
-                    if (value !== '') {
-                        ini += `${key} = ${value}\n`
+    // Add field sections
+    state.fieldSections.value.forEach((field) => {
+        ini += '\n\n[Field]\n'
+        
+        // Add regular fields
+        const regularFields = Object.entries(field)
+            .filter(([key, value]) => key !== 'aliases' && value !== '')
+            .map(([key, value]) => `${key} = ${value}`)
+            .join('\n')
+        ini += regularFields
+
+        // Add aliases if they exist
+        if (field.aliases) {
+            const validAliases = field.aliases
+                .split('\n')
+                .filter(line => line.trim() && !line.includes('error'))
+                .map(line => {
+                    line = line.trim()
+                    if (line.startsWith('@')) {
+                        // Always normalize to single spaces around equals
+                        const [keyPart, ...valueParts] = line.split('=')
+                        const key = keyPart.trim()  // Removes all spaces after @
+                        const value = valueParts.join('=').trim()
+                        return `${key} = ${value}`  // Consistent single space format
                     }
+                    return line
                 })
-            })
-
-            state.generatedIni.value = ini
+                .join('\n')
+            if (validAliases) {
+                ini += regularFields ? '\n' : ''
+                ini += validAliases
+            }
         }
+    })
+
+    state.generatedIni.value = ini + '\n'
+}
 
         const downloadIni = () => {
             const blob = new Blob([state.generatedIni.value], {
@@ -680,28 +849,22 @@ export default {
             state.showToast.value = true
             setTimeout(() => {
                 uiManagement.closeToast()
-            }, 6000)
-
-            state.showStartLabel.value = true
-            setTimeout(() => {
-                setTimeout(() => {
-                    state.showStartLabel.value = false
-                }, 500)
-            }, 8000)
+            }, 10000)
         })
 
         return {
             ...state,
+            hasStarted,
             mandatoryFields,
             isParserSectionInvalid,
             isFormValid,
             ...fieldManagement,
             ...scrollManagement,
             ...fileHandling,
-            ...fileHandling,
             ...uiManagement,
             generateIni,
             downloadIni,
+            uploadisDisabled,
             getDefaultValue: (key) => defaults[key] ? `Default: ${defaults[key]}` : ''
         }
     }
