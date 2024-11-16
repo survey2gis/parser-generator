@@ -1,0 +1,794 @@
+<template>
+    <div class="flex h-screen flex-col">
+      <!-- Header -->
+      <div class="bg-white p-4 border-b border-grey">
+        <div class="mx-2 flex justify-between items-center">
+          <!-- Logo -->
+          <h1 class="text-lg font-semibold">
+            <i class="pi pi-bullseye me-3 text-black-500"></i>
+            <a href="/">Survey2GIS Parser Generator</a>
+          </h1>
+  
+          <!-- menu -->
+          <div class="flex items-center gap-6">
+            <!-- Import Options Dropdown -->
+            <div class="relative" v-click-outside="closeDropdown">
+              <button
+                @click="isDropdownOpen = !isDropdownOpen"
+                class="px-4 py-2 border border-gray-300 flex items-center gap-2 bg-white hover:bg-gray-50 w-full transition-colors duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <span class="text-gray-700 font-medium px-2">{{ t('navigation.loadParser') }}</span>
+                <i 
+                  class="pi pi-chevron-down text-gray-500 transition-transform duration-200"
+                  :class="{'rotate-180': isDropdownOpen}"
+                ></i>
+              </button>
+  
+              <!-- Dropdown Menu -->
+              <div 
+                v-if="isDropdownOpen"
+                class="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 w-full overflow-hidden"
+              >
+                <div class="py-1">
+                  <label 
+                    for="file-upload" 
+                    class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
+                    :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
+                    @click.prevent="triggerFileUpload"
+                  >
+                    <i class="pi pi-upload text-blue-600 me-3"></i>
+                    <span class="text-gray-700">{{ t('navigation.uploadParser') }}</span>
+                  </label>
+                  
+                  <button
+                    class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+                    :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
+                    @click="loadSampleData"
+                  >
+                    <i class="pi pi-cloud-download text-blue-600 me-3"></i>
+                    <span class="text-gray-700">{{ t('navigation.loadSample') }}</span>
+                  </button>
+                </div>
+              </div>
+  
+              <input
+                type="file"
+                accept=".ini,.txt"
+                @change="handleFileUpload"
+                class="hidden"
+                ref="fileInput"
+                id="file-upload"
+              />
+            </div>
+  
+            <!-- Download Button -->
+            <button
+              @click="downloadIni"
+              :disabled="!isFormValid"
+              class="py-2 px-4 flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              :class="isFormValid 
+                ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm focus:ring-green-500' 
+                : 'bg-gray-100 border border-gray-300 text-gray-400 cursor-not-allowed'"
+            >
+              <i class="pi pi-download"></i>
+              <span>{{ t('navigation.download') }}</span>
+            </button>
+  
+            <!-- Language Selector -->
+            <select
+              v-model="$i18n.locale"
+              class="px-3 py-2 border border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="en">En</option>
+              <option value="de">De</option>
+            </select>
+  
+            <!-- Help Links -->
+            <div class="flex items-center gap-4">
+              <button 
+                @click.stop="showHelp('imprint')" 
+                class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
+              >
+                {{ t('navigation.imprint') }}
+              </button>
+  
+              <button 
+                @click.stop="showHelp('help')" 
+                class="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
+              >
+                {{ t('navigation.help') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Main Content -->
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Left Panel -->
+        <div class="w-1/2 p-4 bg-gray-100 overflow-auto left-panel ps-6 pe-6 pt-6" id="left_panel">
+          <!-- Parser Section Card -->
+          <ParserSection
+            v-model="parserSection"
+            :mandatory-fields="mandatoryFields.parser"
+            :is-open="openSection === 'parser'"
+            :show-start-label="showStartLabel"
+            :started="hasStarted" 
+            @toggle-section="toggleSection"
+            @help="showHelp"
+            @started="hasStarted = true"
+          />
+  
+          <!-- Field Sections -->
+          <template v-for="(field, index) in fieldSections" :key="index">
+            <FieldSection
+              v-model="fieldSections[index]"
+              :index="index"
+              :is-open="openSection === index"
+              :validation-errors="validationErrors"
+              :mandatory-fields="mandatoryFields.field"
+              @toggle-section="toggleSection"
+              @help="showHelp"
+              @remove="removeFieldSection"
+              @validate="validateField"
+            />
+          </template>
+  
+          <!-- Add Field Button -->
+          <AddFieldButton 
+            v-if="hasStarted"
+            @add="addFieldSection"
+          />
+        </div>
+  
+        <!-- Right Panel -->
+        <div class="w-1/2 flex flex-col pb-4 ps-4" id="right_panel">
+          <div class="flex-grow overflow-auto code__wrapper">
+            <pre class="rounded-lg"><code class="language-ini code__field">{{ generatedIni }}</code></pre>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Help Sidebar -->
+      <div 
+        v-if="showHelpSidebar" 
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
+        @click.self="closeHelp"
+      >
+        <HelpSidebar 
+          :is-visible="showHelpSidebar"
+          :section="currentHelpSection"
+          @close="closeHelp"
+        />
+      </div>
+  
+      <!-- Guide Notification -->
+      <div
+        v-if="showToast"
+        class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 max-w-md border border-gray-200 transform transition-all duration-500 ease-in-out z-50"
+        :class="showToast ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'"
+      >
+        <div class="flex items-start">
+          <div class="flex-1 mr-4">
+            <p class="text-gray-900">
+              👋 Welcome! New here? Start  
+              <a 
+                href="#" 
+                @click.prevent="showHelp('help')" 
+                class="text-blue-600 hover:text-blue-800 underline cursor-pointer"
+              >
+                here
+              </a> 
+            </p>
+          </div>
+          <button
+            @click="closeToast"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <script setup>
+  import { ref, watch, onMounted, nextTick, computed } from 'vue'
+  import { useI18n } from 'vue-i18n'
+  import HelpSidebar from './components/HelpSidebar.vue'
+  import ParserSection from './components/ParserSection.vue'
+  import FieldSection from './components/FieldSection.vue'
+  import AddFieldButton from './components/AddFieldButton.vue'
+  import { setupPrism, highlightElement } from './utils/prism-setup'
+  import 'primeicons/primeicons.css'
+  import 'prismjs/themes/prism-tomorrow.css'
+  
+  // Initialize Prism
+  setupPrism()
+  
+  const { t } = useI18n()
+  const hasStarted = ref(false)
+  const uploadisDisabled = ref(false    )
+  
+  // State
+  const parserSection = ref({
+    info: '',
+    name: '',
+    comment_mark: '#',
+    coor_x: 'COORX',
+    coor_y: 'COORY',
+    coor_z: 'COORZ',
+    geom_tag_point: '.',
+    geom_tag_line: '$',
+    geom_tag_poly: '@',
+    key_field: '',
+    key_unique: 'No',
+    no_data: '-1',
+    tag_field: '',
+    tagging_mode: 'none',
+    tag_strict: 'No'
+  })
+  
+  const fieldSections = ref([])
+  const validationErrors = ref({})
+  const openSection = ref('')
+  const showHelpSidebar = ref(false)
+  const currentHelpSection = ref('')
+  const showStartLabel = ref(true)
+  const isDropdownOpen = ref(false)
+  const generatedIni = ref(`# ${t('parser.code_comment')}`)
+  const fileError = ref('')
+  const showToast = ref(false)
+  
+  // Constants
+  const mandatoryFields = {
+    parser: ['name', 'coor_x', 'coor_y', 'coor_z'],
+    field: ['name', 'type']
+  }
+  
+
+  
+  // Computed
+  const isFormValid = computed(() => {
+    const isParserValid = mandatoryFields.parser.every(field =>
+      parserSection.value[field] &&
+      parserSection.value[field].trim() !== ''
+    )
+  
+    const areFieldSectionsValid = fieldSections.value.every((field, index) => {
+      const mandatoryFieldsValid = mandatoryFields.field.every(fieldName =>
+        field[fieldName] && field[fieldName].trim() !== ''
+      )
+  
+      const hasValidationErrors = Object.keys(validationErrors.value)
+        .some(key => key.startsWith(`field-${index}`))
+  
+      return mandatoryFieldsValid && !hasValidationErrors
+    })
+  
+    return isParserValid && areFieldSectionsValid && fieldSections.value.length > 0
+  })
+  
+
+  
+  // Field Management Methods
+  const validateField = (fieldIndex, fieldName, value) => {
+    if (fieldName === 'aliases') {
+      if (value) {
+        validationErrors.value = {
+          ...validationErrors.value,
+          [`field-${fieldIndex}-aliases`]: value
+        }
+      } else {
+        const newErrors = { ...validationErrors.value }
+        delete newErrors[`field-${fieldIndex}-aliases`]
+        validationErrors.value = newErrors
+      }
+      return
+    }
+  
+    const errors = validateFieldName(value)
+    if (errors.length > 0) {
+      validationErrors.value = {
+        ...validationErrors.value,
+        [`field-${fieldIndex}`]: errors
+      }
+    } else {
+      const newErrors = { ...validationErrors.value }
+      delete newErrors[`field-${fieldIndex}`]
+      validationErrors.value = newErrors
+    }
+  }
+  
+  const validateFieldName = (name) => {
+    const errors = []
+    if (name.length > 10) {
+      errors.push('Field name must be 10 characters or less')
+    }
+    if (!/^[A-Za-z0-9_]*$/.test(name)) {
+      errors.push('Field name can only contain letters, numbers, and underscores')
+    }
+    return errors
+  }
+  
+  const addFieldSection = () => {
+    const newField = {
+      name: '',
+      change_case: 'lower',
+      empty_allowed: 'no',
+      info: '',
+      merge_separators: 'no',
+      persistent: 'no',
+      quotation: "'",
+      skip: 'no',
+      separator: ';',
+      type: 'text',
+      unique: 'no',
+      aliases: ''
+    }
+    fieldSections.value.push(newField)
+    openSection.value = fieldSections.value.length - 1
+    scrollToSection(fieldSections.value.length - 1)
+  }
+  
+  const removeFieldSection = (fieldIndex) => {
+    fieldSections.value.splice(fieldIndex, 1)
+    const newErrors = { ...validationErrors.value }
+    delete newErrors[`field-${fieldIndex}`]
+    validationErrors.value = newErrors
+  
+    if (openSection.value === fieldIndex) {
+      openSection.value = null
+    } else if (typeof openSection.value === 'number' && openSection.value > fieldIndex) {
+      openSection.value--
+    }
+  
+    generateIni()
+  }
+  
+  // Scroll Management
+  const scrollToSection = (section) => {
+    nextTick(() => {
+      const scrollContainer = document.querySelector('.code__wrapper')
+      const preElement = document.querySelector('.code__field')
+      const leftPanelItems = document.querySelectorAll('.left-panel .section')
+  
+      if (!scrollContainer || !preElement || !leftPanelItems.length) {
+        console.error('Required elements not found')
+        return
+      }
+  
+      const lines = generatedIni.value.split('\n')
+      let targetLineIndex = 0
+  
+      if (section === 'parser') {
+        targetLineIndex = lines.findIndex(line => line.trim() === '[Parser]')
+      } else {
+        let fieldCount = -1
+        targetLineIndex = lines.findIndex((line) => {
+          if (line.trim() === '[Field]') {
+            fieldCount++
+            if (fieldCount === section) {
+              return true
+            }
+          }
+          return false
+        })
+      }
+  
+      if (targetLineIndex === -1) {
+        console.error('Target section not found')
+        return
+      }
+  
+    const lineHeight = parseInt(window.getComputedStyle(preElement).lineHeight) || 20
+    const scrollPosition = targetLineIndex * lineHeight
+
+    let leftPanelItem
+    if (section === 'parser') {
+      leftPanelItem = Array.from(leftPanelItems).find(item => item.textContent.includes('Parser'))
+    } else {
+      leftPanelItem = leftPanelItems[section]
+    }
+
+    if (!leftPanelItem) {
+      console.error(`Left panel item for section ${section} not found`)
+      return
+    }
+
+    const leftPanelY = leftPanelItem.getBoundingClientRect().top
+    const scrollContainerTop = scrollContainer.getBoundingClientRect().top
+    let targetScrollPosition = scrollPosition + (leftPanelY - scrollContainerTop)
+
+    const initialSectionOffset = 30
+    if (section === 'parser' || section <= 2) {
+      targetScrollPosition -= initialSectionOffset
+    }
+
+    scrollContainer.scrollTo({
+      top: Math.max(0, targetScrollPosition),
+      behavior: 'smooth'
+    })
+  })
+}
+
+const toggleSection = (section) => {
+  const wasOpen = openSection.value === section
+  openSection.value = wasOpen ? null : section
+
+  if (!wasOpen && section !== null) {
+    scrollToSection(section)
+  }
+}
+
+// File Handling
+const validateAliases = (aliases) => {
+  if (!aliases) return null
+
+  const lines = aliases.split('\n').filter(line => line.trim())
+  const keys = new Set()
+  const lowercaseKeys = new Set()
+
+  for (const line of lines) {
+    if (!line.startsWith('@')) {
+      return 'Each line must start with @'
+    }
+
+    const [keyPart, ...valueParts] = line.substring(1).split('=')
+    const key = keyPart.trim()
+    const value = valueParts.join('=').trim()
+    
+    if (!key || !value) {
+      return 'Each line must be in format @key=value'
+    }
+
+    const specialCharsRegex = /[^a-zA-Z0-9_]/
+    if (specialCharsRegex.test(key) || specialCharsRegex.test(value)) {
+      return 'Keys and values can only contain letters, numbers, and underscores'
+    }
+
+    if (keys.has(key)) {
+      return `Duplicate key found: ${key}`
+    }
+    keys.add(key)
+
+    const lowercaseKey = key.toLowerCase()
+    if (lowercaseKeys.has(lowercaseKey) && !keys.has(key)) {
+      return `Case-insensitive duplicate key found: ${key}`
+    }
+    lowercaseKeys.add(lowercaseKey)
+  }
+
+  return null
+}
+
+const loadSampleData = () => {
+  const samplePath = './parser/parser_desc_min.txt'
+  fetch(samplePath)
+    .then(response => response.text())
+    .then(content => {
+      parseIniContent(content)
+      closeDropdown()
+    })
+    .catch(error => {
+      fileError.value = `Error loading sample data: ${error.message}`
+    })
+}
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) {
+    fileError.value = 'No file selected'
+    return
+  }
+
+  if (!file.name.toLowerCase().endsWith('.ini') && !file.name.toLowerCase().endsWith('.txt')) {
+    fileError.value = 'Invalid file type. Please upload an .ini or .txt file'
+    return
+  }
+
+  try {
+    const content = await readFileContent(file)
+    parseIniContent(content)
+    fileError.value = ''
+  } catch (error) {
+    fileError.value = `Error reading file: ${error.message}`
+  }
+}
+
+const readFileContent = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = (event) => {
+      try {
+        resolve(event.target.result)
+      } catch (error) {
+        reject(error)
+      }
+    }
+
+    reader.onerror = (event) => {
+      reject(new Error(event.target.error))
+    }
+
+    reader.readAsText(file)
+  })
+}
+
+const parseIniContent = (content) => {
+  try {
+    // Reset state
+    parserSection.value = {
+      info: '',
+      name: '',
+      comment_mark: '#',
+      coor_x: 'COORX',
+      coor_y: 'COORY',
+      coor_z: 'COORZ',
+      geom_tag_point: '.',
+      geom_tag_line: '$',
+      geom_tag_poly: '@',
+      key_field: '',
+      key_unique: 'No',
+      no_data: '-1',
+      tag_field: '',
+      tagging_mode: 'none',
+      tag_strict: 'No'
+    }
+    fileError.value = ''
+    validationErrors.value = {}
+
+    hasStarted.value = true
+    openSection.value = 'parser'
+
+    let currentSection = null
+    let currentAliases = []
+    let currentFieldIndex = -1
+    const lines = content.split('\n')
+
+    for (let line of lines) {
+      line = line.trim()
+
+      if (!line || line.startsWith('#')) continue
+
+      if (line.startsWith('[') && line.endsWith(']')) {
+        if (currentSection === 'field' && currentAliases.length > 0 && 
+            fieldSections.value.length > 0) {
+          const currentField = fieldSections.value[fieldSections.value.length - 1]
+          const aliasesString = currentAliases.join('\n')
+          
+          const validationError = validateAliases(aliasesString)
+          if (validationError) {
+            validationErrors.value[`field-${currentFieldIndex}-aliases`] = validationError
+          }
+          currentField.aliases = aliasesString
+        }
+        
+        currentSection = line.slice(1, -1).toLowerCase()
+        currentAliases = []
+        
+        if (currentSection === 'field') {
+          currentFieldIndex++
+          fieldSections.value.push({
+            change_case: 'lower',
+            empty_allowed: 'no',
+            info: '',
+            merge_separators: 'no',
+            name: '',
+            persistent: 'no',
+            quotation: "'",
+            skip: 'no',
+            separator: ';',
+            type: 'text',
+            unique: 'no',
+            aliases: ''
+          })
+        }
+        continue
+      }
+
+      if (currentSection) {
+        if (line.startsWith('@')) {
+          currentAliases.push(line)
+        } else if (line.includes('=')) {
+          const [key, ...valueParts] = line.split('=')
+          const trimmedKey = key.trim()
+          const value = valueParts.join('=').trim()
+
+          if (currentSection === 'parser') {
+            if (trimmedKey in parserSection.value) {
+              parserSection.value[trimmedKey] = value
+            }
+          } else if (currentSection === 'field' && fieldSections.value.length > 0) {
+            const currentField = fieldSections.value[fieldSections.value.length - 1]
+            if (trimmedKey in currentField) {
+              currentField[trimmedKey] = value
+            }
+          }
+        }
+      }
+    }
+
+    if (currentSection === 'field' && currentAliases.length > 0 && 
+        fieldSections.value.length > 0) {
+      const currentField = fieldSections.value[fieldSections.value.length - 1]
+      const aliasesString = currentAliases.join('\n')
+      
+      const validationError = validateAliases(aliasesString)
+      if (validationError) {
+        validationErrors.value[`field-${currentFieldIndex}-aliases`] = validationError
+      }
+      currentField.aliases = aliasesString
+    }
+
+    fieldSections.value.forEach((field, index) => {
+      validateField(index, field.name)
+    })
+
+    generateIni()
+  } catch (error) {
+    fileError.value = `Error parsing INI content: ${error.message}`
+    console.error('Error parsing INI content:', error)
+  }
+}
+
+// UI Management
+const showHelp = (section) => {
+  currentHelpSection.value = section
+  showHelpSidebar.value = true
+}
+
+const closeHelp = () => {
+  showHelpSidebar.value = false
+  currentHelpSection.value = ''
+}
+
+const closeToast = () => {
+  showToast.value = false
+}
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false
+}
+
+const triggerFileUpload = () => {
+  document.querySelector('#file-upload').click()
+}
+
+// INI Generation and Download
+const generateIni = () => {
+  let ini = '[Parser]\n'
+  
+  const parserEntries = Object.entries(parserSection.value)
+    .filter(([, value]) => value !== '')
+    .map(([key, value]) => `${key} = ${value}`)
+    .join('\n')
+  ini += parserEntries
+
+  fieldSections.value.forEach((field) => {
+    ini += '\n\n[Field]\n'
+    
+    const regularFields = Object.entries(field)
+      .filter(([key, value]) => key !== 'aliases' && value !== '')
+      .map(([key, value]) => `${key} = ${value}`)
+      .join('\n')
+    ini += regularFields
+
+    if (field.aliases) {
+      const validAliases = field.aliases
+        .split('\n')
+        .filter(line => line.trim() && !line.includes('error'))
+        .map(line => {
+          line = line.trim()
+          if (line.startsWith('@')) {
+            const [keyPart, ...valueParts] = line.split('=')
+            const key = keyPart.trim()
+            const value = valueParts.join('=').trim()
+            return `${key} = ${value}`
+          }
+          return line
+        })
+        .join('\n')
+      if (validAliases) {
+        ini += regularFields ? '\n' : ''
+        ini += validAliases
+      }
+    }
+  })
+
+  generatedIni.value = ini + '\n'
+}
+
+const downloadIni = () => {
+  const blob = new Blob([generatedIni.value], { type: 'text/plain' })
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'survey2gis_parser.ini'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(url)
+}
+
+
+// Watch
+watch(() => t('parser.code_comment'), (newComment) => {
+  if (!generatedIni.value.includes('=')) {
+    generatedIni.value = `# ${newComment}`
+  }
+})
+
+// Lifecycle
+onMounted(() => {
+  const scrollContainer = document.querySelector('.code__wrapper')
+  if (scrollContainer) {
+    scrollContainer.style.overflowY = 'auto'
+    scrollContainer.style.position = 'relative'
+  }
+
+  watch(
+    () => generatedIni.value,
+    () => {
+      nextTick(() => {
+        document.querySelectorAll('pre code').forEach((block) => {
+          highlightElement(block)
+        })
+      })
+    },
+    { immediate: true }
+  )
+
+  watch(
+    [
+      () => parserSection.value, 
+      () => fieldSections.value,
+      () => validationErrors.value
+    ],
+    () => {
+      generateIni()
+    },
+    { deep: true }
+  )
+
+  showToast.value = true
+  setTimeout(() => {
+    closeToast()
+  }, 10000)
+})
+</script>
+
+<style>
+#right_panel {
+  background: #2d2d2d;
+}
+
+.code__wrapper pre {
+  margin: 0;
+  padding: 1rem;
+}
+
+.code__wrapper pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.token.section {
+  color: #79b8ff !important;
+}
+
+.token.key {
+  color: #e1e4e8 !important;
+}
+
+.token.value {
+  color: #85e89d !important;
+}
+
+.token.comment {
+  color: #959da5 !important;
+  font-style: italic;
+}
+</style>
