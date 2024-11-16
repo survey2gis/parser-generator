@@ -5,5 +5,6 @@ export default {
   loadSample: 'Load sample data',
   download: 'Download parser file',
   imprint: 'Imprint',
-  help: 'Help'
+  help: 'Help',
+  parser_repository: 'Parser Repository',
 }

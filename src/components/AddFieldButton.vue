@@ -5,7 +5,7 @@
         class="flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
       >
         <i class="pi pi-plus text-xl"></i>
-        Add New Field Section
+        {{$t('field.add_new_field_section')}}
       </button>
     </div>
   </template>

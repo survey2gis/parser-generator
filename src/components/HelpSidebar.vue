@@ -1,20 +1,5 @@
-<!-- HelpSidebar.vue -->
 <template>
-    <div 
-      v-if="isVisible" 
-      class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
-      @click.self="close"
-    >
-      <div class="w-1/2 bg-white h-full p-4 overflow-y-auto">
-        <div class="flex justify-between items-center mb-1">
-          <h1 class="text-xl font-semibold">{{ title }}</h1>
-          <button @click="close" class="text-gray-500 hover:text-gray-700">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-  
+  <div class="prose prose-sm">
         <!-- Parser Section Help Content -->
         <div v-if="section === 'parser'" class="prose prose-sm">
           
@@ -462,40 +447,17 @@
             </div>
         </div>
 
-        </div>
-      </div>
-  </template>
+    </div>
+</template>
   
-  <script>
-  export default {
-    name: 'HelpSidebar',
-    props: {
-      isVisible: {
-        type: Boolean,
-        required: true
-      },
-      section: {
-        type: String,
-        required: true
-      }
-    },
-    computed: {
-      title() {
-        const titles = {
-          parser: 'Parser Section Help',
-          field: 'Field Section Help',
-          imprint: 'Imprint',
-          help: 'Help',
-        }
-        return titles[this.section] || ''
-      }
-    },
-    methods: {
-      close() {
-        this.$emit('close')
-      }
+  <script setup>
+  import { defineProps } from 'vue'
+  defineProps({
+    section: {
+      type: String,
+      required: true
     }
-  }
+  })
   </script>
   
   <style scoped>

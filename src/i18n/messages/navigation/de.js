@@ -5,5 +5,6 @@ export default {
   loadSample: 'Beispieldaten laden',
   download: 'Parser-Datei herunterladen',
   imprint: 'Impressum',
-  help: 'Hilfe'
+  help: 'Hilfe',
+  parser_repository: 'Parser Verzeichnis',
 }

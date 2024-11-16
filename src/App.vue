@@ -34,7 +34,7 @@
                     for="file-upload" 
                     class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
                     :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
-                    @click.prevent="triggerFileUpload"
+                    @click.prevent="uploadisDisabled ? triggerFileUpload : false"
                   >
                     <i class="pi pi-upload text-blue-600 me-3"></i>
                     <span class="text-gray-700">{{ t('navigation.uploadParser') }}</span>
@@ -43,11 +43,22 @@
                   <button
                     class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
                     :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
-                    @click="loadSampleData"
+                    @click="uploadisDisabled ? loadSampleData: false"
                   >
                     <i class="pi pi-cloud-download text-blue-600 me-3"></i>
                     <span class="text-gray-700">{{ t('navigation.loadSample') }}</span>
                   </button>
+
+                  <button
+                    class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+                    :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
+
+                    @click="uploadisDisabled ? showRepository : false"
+                    >
+                    <i class="pi pi-database text-blue-600 me-3"></i>
+                    <span class="text-gray-700">{{ t('navigation.parser_repository') }}</span>
+                    </button>
+
                 </div>
               </div>
   
@@ -149,19 +160,18 @@
         </div>
       </div>
   
-      <!-- Help Sidebar -->
-      <div 
-        v-if="showHelpSidebar" 
-        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
-        @click.self="closeHelp"
-      >
-        <HelpSidebar 
-          :is-visible="showHelpSidebar"
-          :section="currentHelpSection"
-          @close="closeHelp"
+        <!-- Sidebar -->
+        <DynamicSidebar 
+            v-if="showSidebar"
+            :title="sidebarConfig.title"
+            :component="sidebarConfig.component"
+            :component-props="{
+            ...sidebarConfig.props,
+            onSelectParser: handleParserSelection
+            }"
+            @close="closeSidebar"
         />
-      </div>
-  
+
       <!-- Guide Notification -->
       <div
         v-if="showToast"
@@ -193,99 +203,111 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, computed } from 'vue'
-  import { useI18n } from 'vue-i18n'
-  import { setupPrism } from './utils/prism-setup'
-  import { useParser } from './composables/useParser'
-  import { useFields } from './composables/useFields'
-  import { useUI } from './composables/useUI'
-  import { useFileHandler } from './composables/useFileHandler'
-  import { useIniGenerator } from './composables/useIniGenerator'
-  import { MANDATORY_FIELDS } from './constants/parser'  // Add this import
-  
-  import HelpSidebar from './components/HelpSidebar.vue'
-  import ParserSection from './components/ParserSection.vue'
-  import FieldSection from './components/FieldSection.vue'
-  import AddFieldButton from './components/AddFieldButton.vue'
-  
-  import 'primeicons/primeicons.css'
-  import 'prismjs/themes/prism-tomorrow.css'
-  
-  // Initialize Prism and i18n
-  setupPrism()
-  const { t } = useI18n()
-  const hasStarted = ref(false)
-  
-  // Initialize composables
-  const { parserSection, resetParser } = useParser()
-  
-  const { 
-    fieldSections, 
-    validationErrors, 
-    validateField, 
-    addFieldSection, 
-    removeFieldSection 
-  } = useFields()
-  
-  const { 
-    showHelpSidebar, 
-    currentHelpSection, 
-    showStartLabel,
-    isDropdownOpen,
-    showToast,
-    openSection,
-    showHelp,
-    closeHelp,
-    closeToast,
-    closeDropdown,
-    toggleSection
-  } = useUI()
-  
-  const {
-    uploadisDisabled,
-    handleFileUpload,
-    loadSampleData,
-    triggerFileUpload
-  } = useFileHandler({
-    parserSection,
-    fieldSections,
-    hasStarted,
-    openSection,
-    resetParser,
-    validationErrors,
-    addFieldSection,
-    validateField
-  })
-  
-  const {
-    generatedIni,
-    downloadIni
-  } = useIniGenerator(parserSection, fieldSections)
-  
-  // Form validation
-  const isFormValid = computed(() => {
-    const isParserValid = Object.entries(parserSection.value)
-      .filter(([key]) => MANDATORY_FIELDS.parser.includes(key))
-      .every(([, value]) => value && value.trim() !== '')
-  
-    const areFieldsValid = fieldSections.value.length > 0 && 
-      !Object.keys(validationErrors.value).length &&
-      fieldSections.value.every(field => 
-        field.name && field.name.trim() !== '' &&
-        field.type && field.type.trim() !== ''
-      )
-  
-    return isParserValid && areFieldsValid
-  })
-  
-  // Setup
-  onMounted(() => {
-    showToast.value = true
-    setTimeout(() => {
-      closeToast()
-    }, 10000)
-  })
-  </script>
+import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { setupPrism } from './utils/prism-setup'
+import { useParser } from './composables/useParser'
+import { useFields } from './composables/useFields'
+import { useUI } from './composables/useUI'
+import { useFileHandler } from './composables/useFileHandler'
+import { useIniGenerator } from './composables/useIniGenerator'
+import { MANDATORY_FIELDS } from './constants/parser'
+
+import DynamicSidebar from './components/DynamicSidebar.vue'  // Changed from HelpSidebar
+import ParserSection from './components/ParserSection.vue'
+import FieldSection from './components/FieldSection.vue'
+import AddFieldButton from './components/AddFieldButton.vue'
+
+import 'primeicons/primeicons.css'
+import 'prismjs/themes/prism-tomorrow.css'
+
+// Initialize Prism and i18n
+setupPrism()
+const { t } = useI18n()
+const hasStarted = ref(false)
+
+// Initialize composables
+const { parserSection, resetParser } = useParser()
+
+const handleParserSelection = async ({ content }) => {
+  try {
+    await parseIniContent(content)
+    closeSidebar()
+    closeDropdown()
+  } catch (error) {
+    console.error('Error loading parser:', error)
+  }
+}
+
+const { 
+  fieldSections, 
+  validationErrors, 
+  validateField, 
+  addFieldSection, 
+  removeFieldSection 
+} = useFields()
+
+const { 
+  showSidebar, 
+  showRepository,
+  sidebarConfig, 
+  showStartLabel,
+  isDropdownOpen,
+  showToast,
+  openSection,
+  showHelp,
+  closeSidebar,
+  closeToast, 
+  closeDropdown,
+  toggleSection
+} = useUI()
+
+const {
+  uploadisDisabled,
+  handleFileUpload,
+  loadSampleData,
+  triggerFileUpload,
+  parseIniContent
+} = useFileHandler({
+  parserSection,
+  fieldSections,
+  hasStarted,
+  openSection,
+  resetParser,
+  validationErrors,
+  addFieldSection,
+  validateField
+})
+
+const {
+  generatedIni,
+  downloadIni
+} = useIniGenerator(parserSection, fieldSections)
+
+// Form validation
+const isFormValid = computed(() => {
+  const isParserValid = Object.entries(parserSection.value)
+    .filter(([key]) => MANDATORY_FIELDS.parser.includes(key))
+    .every(([, value]) => value && value.trim() !== '')
+
+  const areFieldsValid = fieldSections.value.length > 0 && 
+    !Object.keys(validationErrors.value).length &&
+    fieldSections.value.every(field => 
+      field.name && field.name.trim() !== '' &&
+      field.type && field.type.trim() !== ''
+    )
+
+  return isParserValid && areFieldsValid
+})
+
+// Setup
+onMounted(() => {
+  showToast.value = true
+  setTimeout(() => {
+    closeToast()
+  }, 10000)
+})
+</script>
 
 <style>
 #right_panel {
