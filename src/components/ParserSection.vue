@@ -121,7 +121,7 @@
     },
     emits: ['update:modelValue', 'toggle-section', 'help', 'started'],
     setup(props, { emit }) {
-      const isStarted = ref(props.started)  // Changed from started to isStarted
+      const isStarted = ref(props.started)
   
       // Watch for changes to the started prop
       watch(() => props.started, (newValue) => {

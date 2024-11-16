@@ -11,7 +11,7 @@
           @click="$emit('toggle-section', index)"
         >
           <div class="flex items-center">
-            <h3 class="text-lg font-semibold">Field Section {{ index + 1 }} </h3>
+            <h3 class="text-lg font-semibold">{{ $t('field.field_section')}} {{ index + 1 }} </h3>
 
             <i 
             v-if="!isFieldSectionInvalid"
