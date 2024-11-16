@@ -28,7 +28,7 @@ src/
 
 ## 2. Data Flow and Component Interactions
 
-<img src="docs/readme/img/structure-diagram.jpeg" alt="diagramm">
+<img src="docs/readme/img/structure-diagram-dark.jpeg" alt="diagramm">
 
 ## 3. Key Components and Their Roles
 
