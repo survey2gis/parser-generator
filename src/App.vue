@@ -6,7 +6,7 @@
           <!-- Logo -->
           <h1 class="text-lg font-semibold">
             <i class="pi pi-bullseye me-3 text-black-500"></i>
-            <a href="/">Survey2GIS Parser Generator</a>
+            <a href="/">Survey2GIS Parser Generator <span class="text-red-500 italic">DEV</span></a>
           </h1>
   
           <!-- menu -->
