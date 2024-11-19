@@ -1,10 +1,9 @@
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 
-import { useI18n } from 'vue-i18n'
+import { highlightElement } from '../utils/prism-setup'
 
 export function useIniGenerator(parserSection, fieldSections) {
-  const { t } = useI18n()
-  const generatedIni = ref(`# ${t('parser.code_comment')}`)
+  const generatedIni = ref('')
 
   const generateIni = () => {
     let ini = '[Parser]\n'
@@ -47,7 +46,18 @@ export function useIniGenerator(parserSection, fieldSections) {
     })
 
     generatedIni.value = ini + '\n'
+
+    // Update syntax highlighting after content changes
+    nextTick(() => {
+      const codeElement = document.querySelector('.code__field')
+      if (codeElement) {
+        highlightElement(codeElement)
+      }
+    })
   }
+
+  // Watch for changes and regenerate INI
+  watch([parserSection, fieldSections], generateIni, { deep: true })
 
   const downloadIni = () => {
     const blob = new Blob([generatedIni.value], { type: 'text/plain' })
@@ -61,11 +71,9 @@ export function useIniGenerator(parserSection, fieldSections) {
     window.URL.revokeObjectURL(url)
   }
 
-  // Watch for changes and regenerate INI
-  watch([parserSection, fieldSections], generateIni, { deep: true })
-
   return {
     generatedIni,
+    generateIni,
     downloadIni
   }
 }
