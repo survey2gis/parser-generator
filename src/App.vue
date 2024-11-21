@@ -34,7 +34,7 @@
                     for="file-upload" 
                     class="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer w-full transition-colors duration-150"
                     :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
-                    @click.prevent="uploadisDisabled ? triggerFileUpload : false"
+                    @click.prevent="!uploadisDisabled && triggerFileUpload()"
                   >
                     <i class="pi pi-upload text-blue-600 me-3"></i>
                     <span class="text-gray-700">{{ t('navigation.uploadParser') }}</span>
@@ -43,7 +43,7 @@
                   <button
                     class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
                     :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
-                    @click="uploadisDisabled ? loadSampleData: false"
+                    @click="!uploadisDisabled && loadSampleData()"
                   >
                     <i class="pi pi-cloud-download text-blue-600 me-3"></i>
                     <span class="text-gray-700">{{ t('navigation.loadSample') }}</span>
@@ -53,7 +53,7 @@
                     class="w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
                     :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
 
-                    @click="uploadisDisabled ? showRepository : false"
+                    @click="!uploadisDisabled && showRepository()"
                     >
                     <i class="pi pi-database text-blue-600 me-3"></i>
                     <span class="text-gray-700">{{ t('navigation.parser_repository') }}</span>
@@ -89,7 +89,9 @@
             <select
               v-model="$i18n.locale"
               class="px-3 py-2 border border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+              :class="{ 'hidden': uploadisDisabled }"
+
+              >
               <option value="en">En</option>
               <option value="de">De</option>
             </select>
