@@ -217,7 +217,7 @@
                 <p>D - 82223 Eichenau</p>
                 <a href="http://www.csgis.de" target="_blank" rel="noopener noreferrer" 
                    class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                    www.csgis.de
+                    www.csgis.de (v1.1)
                 </a>
             </div>
         </div>
