@@ -59,6 +59,15 @@
                     <span class="text-gray-700">{{ t('navigation.parser_repository') }}</span>
                     </button>
 
+                    <button
+                      class="hidden w-full text-left flex items-center px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
+                      :class="{ 'opacity-50 cursor-not-allowed': uploadisDisabled }"
+                      @click="!uploadisDisabled && showFormatDetector()"
+                    >
+                      <i class="pi pi-search text-blue-600 me-3"></i>
+                      <span class="text-gray-700">{{ t('format.detected_input_format') }}</span>
+                    </button>
+
                 </div>
               </div>
   
@@ -127,7 +136,7 @@
                 :is-open="openSection === 'parser'"
                 :show-start-label="showStartLabel"
                 :started="hasStarted" 
-                @toggle-section="toggleSection"
+                @toggle-section="handleToggleSection"
                 @help="showHelp"
                 @started="hasStarted = true"
           />
@@ -140,7 +149,7 @@
               :is-open="openSection === index"
               :validation-errors="validationErrors"
               :mandatory-fields="MANDATORY_FIELDS.field"
-              @toggle-section="toggleSection"
+              @toggle-section="handleToggleSection"
               @help="showHelp"
               @remove="removeFieldSection"
               @validate="validateField"
@@ -215,7 +224,7 @@ import { useFileHandler } from './composables/useFileHandler'
 import { useIniGenerator } from './composables/useIniGenerator'
 import { MANDATORY_FIELDS } from './constants/parser'
 
-import DynamicSidebar from './components/DynamicSidebar.vue'  // Changed from HelpSidebar
+import DynamicSidebar from './components/DynamicSidebar.vue'
 import ParserSection from './components/ParserSection.vue'
 import FieldSection from './components/FieldSection.vue'
 import AddFieldButton from './components/AddFieldButton.vue'
@@ -249,6 +258,12 @@ const {
   removeFieldSection 
 } = useFields()
 
+
+const {
+  generatedIni,
+  downloadIni
+} = useIniGenerator(parserSection, fieldSections)
+
 const { 
   showSidebar, 
   showRepository,
@@ -261,7 +276,8 @@ const {
   closeSidebar,
   closeToast, 
   closeDropdown,
-  toggleSection
+  toggleSection,
+  showFormatDetector
 } = useUI()
 
 const {
@@ -281,10 +297,11 @@ const {
   validateField
 })
 
-const {
-  generatedIni,
-  downloadIni
-} = useIniGenerator(parserSection, fieldSections)
+
+
+const handleToggleSection = (section) => {
+  toggleSection(section, generatedIni.value)
+}
 
 // Form validation
 const isFormValid = computed(() => {
@@ -342,5 +359,39 @@ onMounted(() => {
 .token.comment {
   color: #959da5 !important;
   font-style: italic;
+}
+
+
+/* Global scrollbar styling */
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox */
+}
+
+*:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Firefox */
+}
+
+/* Webkit scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 3px;
+  transition: background-color 0.3s;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

@@ -1,0 +1,23 @@
+export default {
+    title: 'Erkennungsprogramm für Umfragedatenformate',
+    paste_label: 'Fügen Sie hier Ihre Umfragedaten ein',
+    placeholder: 'Fügen Sie Zeilen aus Ihren Tachymeter-Daten ein...',
+    analyze: 'Format analysieren',
+    results: 'Analyseergebnisse',
+    detected_mode: 'Erkannter Modus',
+    explanation: 'Erklärung',
+    feature_counts: 'Anzahl der Features',
+    points: 'Punkte',
+    lines: 'Linien',
+    polygons: 'Polygone',
+    found_codes: 'Gefundene Feature-Codes',
+    no_codes_min_mode: 'Keine Feature-Codes in den folgenden Zeilen sichtbar bei Verwendung des Min-Modus - nur die erste Zeile enthält vollständige Informationen.',
+    separator: 'Trennzeichen',
+    parser_note_title: 'Wichtiger Hinweis zur Parser-Konfiguration',
+    parser_note_content: 'Der erkannte Modus muss mit Ihrer Parser-Konfiguration übereinstimmen, damit die Daten korrekt interpretiert werden. Stellen Sie sicher, dass Sie den entsprechenden tagging_mode in Ihrer Parser-Datei basierend auf dieser Analyse festlegen.',
+    no_markers: 'Keine Geometriemarkierungen gefunden. Dies scheint der "None"-Modus für punktbasierte Daten zu sein.',
+    end_mode_detected: 'Geometriemarkierung nur am Ende der Datenfolge gefunden. Dies deutet auf den "End"-Modus hin.',
+    min_mode_detected: 'Geometriemarkierung nur am Anfang der Datenfolge gefunden. Dies deutet auf den "Min"-Modus hin.',
+    max_mode_detected: 'Geometriemarkierungen im gesamten Datensatz gefunden. Dies deutet auf den "Max"-Modus hin.',
+    detected_input_format: 'Eingabe analysieren'
+  }

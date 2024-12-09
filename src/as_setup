@@ -208,7 +208,7 @@
   
   const { t } = useI18n()
   const hasStarted = ref(false)
-  const uploadisDisabled = ref(false    )
+  const uploadisDisabled = ref(true)
   
   // State
   const parserSection = ref({

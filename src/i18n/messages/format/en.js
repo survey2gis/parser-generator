@@ -1,0 +1,23 @@
+export default {
+    title: 'Survey Data Format Detector',
+    paste_label: 'Paste your survey data here',
+    placeholder: 'Paste lines from your total station data...',
+    analyze: 'Analyze Format',
+    results: 'Analysis Results',
+    detected_mode: 'Detected Mode',
+    explanation: 'Explanation',
+    feature_counts: 'Feature Counts',
+    points: 'Points',
+    lines: 'Lines',
+    polygons: 'Polygons',
+    found_codes: 'Found Feature Codes',
+    no_codes_min_mode: 'No feature codes visible in following lines when using Min mode - only first line contains full information.',
+    separator: 'Separator',
+    parser_note_title: 'Important Parser Configuration Note',
+    parser_note_content: 'The detected mode must match your parser configuration for correct data interpretation. Make sure to set the appropriate tagging_mode in your parser file based on this analysis.',
+    no_markers: 'No geometry markers found. This appears to be "None" mode for point-only data.',
+    end_mode_detected: 'Geometry marker found only at the end of the data sequence. This indicates "End" mode.',
+    min_mode_detected: 'Geometry marker found only at the start of the data sequence. This indicates "Min" mode.',
+    max_mode_detected: 'Geometry markers found throughout the data. This indicates "Max" mode.',
+    detected_input_format: 'Analyze input'
+}
