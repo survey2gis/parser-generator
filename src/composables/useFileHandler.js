@@ -13,7 +13,7 @@ export function useFileHandler({
   validateField
 }) {
   const fileError = ref('')
-  const uploadisDisabled = ref(true)
+  const uploadisDisabled = ref(false)
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0]
