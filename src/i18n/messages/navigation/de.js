@@ -7,4 +7,12 @@ export default {
   imprint: 'Impressum',
   help: 'Hilfe',
   parser_repository: 'Parser Verzeichnis',
+  welcome: {
+    message: 'Willkommen! Neu hier? Starten Sie',
+    here: 'hier'
+  },
+  repository: {
+    helpText: 'Dieser Bereich ermöglicht es Ihnen, Parser-Konfigurationen aus dem Community-Repository zu laden',
+    contributeText: 'Möchten Sie Ihren eigenen Parser teilen? Besuchen Sie das Repository für Informationen, wie Sie Ihre Konfigurationen beitragen können, um der Community zu helfen.'
+  }
 }

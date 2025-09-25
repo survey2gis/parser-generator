@@ -1,5 +1,27 @@
 <template>
-    <div class="space-y-6">
+  
+  <div class="space-y-6">
+    <!-- Help Section -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-start">
+        <i class="pi pi-info-circle text-blue-600 mt-1 mr-3"></i>
+        <div class="text-sm text-blue-800">
+          <p class="mb-2">
+            {{ $t('navigation.repository.helpText') }}
+          </p>
+          <p>
+            {{ $t('navigation.repository.contributeText') }}             <a 
+              href="https://github.com/survey2gis/parser-repository" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="underline hover:text-blue-900 font-medium"
+            ><br>
+              github.com/survey2gis/parser-repository
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
       <!-- Search and Status Bar -->
       <div class="flex justify-between items-center">
         <div class="relative flex-grow max-w-md">
@@ -61,7 +83,8 @@
   const searchTerm = ref('')
   const loading = ref(true)
   const error = ref(null)
-  
+
+
   // Filter parsers based on search term
   const filteredParsers = computed(() => {
     if (!searchTerm.value) return parsers.value

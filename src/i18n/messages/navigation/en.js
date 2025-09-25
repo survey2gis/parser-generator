@@ -7,4 +7,12 @@ export default {
   imprint: 'Imprint',
   help: 'Help',
   parser_repository: 'Parser Repository',
+  welcome: {
+  message: 'Welcome! New here? Start',
+  here: 'here'
+  },
+  repository: {
+    helpText: 'This section allows you to load parser configurations from the community repository.',
+    contributeText: 'Want to share your own parser? Visit the repository for information on how to contribute your configurations to help the community.'
+  }
 }

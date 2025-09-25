@@ -1,7 +1,7 @@
 import { nextTick, ref } from 'vue'
 
 import FormatDetector from '../components/FormatDetector.vue'
-import HelpSidebar from '../components/HelpSidebar.vue'
+import HelpSidebar from '../components/help/HelpSidebar.vue'
 import ParserRepository from '../components/ParserRepository.vue'
 
 export function useUI() {

@@ -25,7 +25,7 @@
                                 <li><span class="font-medium">coor z:</span> Optional - if not specified, Z coordinates default to 0.0</li>
                             </ul>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 coor x = xfield<br>
                                 coor y = yfield<br>
                                 coor z = zfield
@@ -46,7 +46,7 @@
                             
                             <p class="text-gray-600">You can define up to 32 tags per geometry type, but they must be unique and not overlap with field separators or quotation marks.</p>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 geom tag point = "*"<br>
                                 geom tag line = "-"<br>
                                 geom tag poly = "@"<br>
@@ -66,7 +66,7 @@
                                 <li>Can be used with "key unique" option to handle multi-part geometries</li>
                             </ul>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 key field = key<br>
                                 key unique = yes  # Optional, for multi-part geometries
                             </code>
@@ -85,7 +85,7 @@
                                 <li><span class="font-medium">none:</span> No tagging - treats all records as simple point measurements</li>
                             </ul>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 tagging mode = end
                             </code>
                         </div>
@@ -108,7 +108,7 @@
                                 <li>Must not conflict with field separators or quotation marks</li>
                             </ul>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 comment mark = #<br>
                                 comment mark = //
                             </code>
@@ -122,7 +122,7 @@
                             
                             <p class="text-gray-600">This value will be written to output files when a field is empty or contains no valid data.</p>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 no data = -99999
                             </code>
                         </div>
@@ -135,7 +135,7 @@
                             
                             <p class="text-gray-600">Defaults to "off" if not specified. Enable this for stricter data validation.</p>
                             
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 tag strict = yes
                             </code>
                         </div>
@@ -157,49 +157,46 @@
 
         </div>
   
-        <!-- Imprint  Content -->
+        <!-- Imprint Content -->
         <div v-if="section === 'imprint'" class="prose prose-sm">
 
         <!-- Contact Information Card -->
-        <div class="bg-white rounded-lg mb-3 mt-6">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Anbieter</h4>
+        <div class="bg-white mb-3 mt-6">
+            <h4 class="text-xl font-bold text-gray-800 mb-1">Provider</h4>
             <div class="space-y-1 text-gray-600">
                 <p class="font-medium">
-                    Landesamt für Denkmalpflege im Regierungspräsidium Stuttgart<br>
+                    State Office for Cultural Heritage Preservation<br>
+                    Stuttgart Regional Council<br>
                     Berliner Straße 12<br>
-                    73728 Esslingen (Neckar)</p>
+                    73728 Esslingen (Neckar), Germany</p>
             </div>
-            
-
         </div>
 
         <!-- Usage Terms Card -->
-        <div class="bg-white rounded-lg mb-3">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Hinweise zur Nutzung</h4>
+        <div class="bg-white mb-3">
+            <h4 class="text-xl font-bold text-gray-800 mb-1">Usage Terms</h4>
             <ol class="list-decimal list-inside space-y-3 text-gray-600">
-                <li>Das Nutzungsrecht wird Ihnen unentgeltlich eingeräumt.</li>
+                <li>Usage rights are granted to you free of charge.</li>
                 <li>
-                    Das Landesamt für Denkmalpflege Baden-Württemberg im Regierungspräsidium Stuttgart 
-                    übernimmt keine Haftung für Hard- oder Softwareschäden, die durch die Anwendung 
-                    dieser Anwendung verursacht werden.
+                    The State Office for Cultural Heritage Preservation Baden-Württemberg in the Stuttgart Regional Council 
+                    assumes no liability for hardware or software damage caused by the use of this application.
                 </li>
                 <li>
-                    Es wird keinerlei Support für die Software gewährleistet. Das LAD und CSGIS haften 
-                    nicht für Fahrlässigkeit. Eine Haftung für mittelbare Schäden oder die 
-                    Wiederbeschaffung von Daten wird ausgeschlossen.
+                    No software support is guaranteed. The LAD and CSGIS are not liable for negligence. 
+                    Liability for indirect damage or data recovery is excluded.
                 </li>
                 <li>
-                    Die Seite verwendet keine Cookies.
+                    This site does not use cookies.
                 </li>
                 <li>
-                    Es werden keine Daten serverseitig verarbeitet oder gespeichert.
+                    No data is processed or stored server-side.
                 </li>
             </ol>
         </div>
 
         <!-- Team Information Card -->
-        <div class="bg-white rounded-lg mb-3">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Projektteam</h4>
+        <div class="bg-white mb-3">
+            <h4 class="text-xl font-bold text-gray-800 mb-1">Project Team</h4>
             <ul class="space-y-1 text-gray-600">
                 <li>Jonas Abele</li>
                 <li>Claus Brenner</li>
@@ -209,12 +206,12 @@
         </div>
 
         <!-- Implementation Details Card -->
-        <div class="bg-white rounded-lg ">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Projektumsetzung</h4>
+        <div class="bg-white rounded-lg">
+            <h4 class="text-xl font-bold text-gray-800 mb-1">Project Implementation</h4>
             <div class="text-gray-600">
                 <p class="font-medium">CSGIS GbR</p>
                 <p>Am Eichbüchl 7</p>
-                <p>D - 82223 Eichenau</p>
+                <p>D - 82223 Eichenau, Germany</p>
                 <a href="http://www.csgis.de" target="_blank" rel="noopener noreferrer" 
                    class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
                     www.csgis.de (v1.1)
@@ -223,12 +220,12 @@
         </div>
         </div>
 
-        <!-- Help  Content -->
+        <!-- Help Content -->
         <div v-if="section === 'help'" class="prose prose-sm">
           <p class="text-lg text-gray-600 mb-8">A web tool to create parser files for Survey2GIS.</p>
 
                 <!-- Quick Start -->
-                <div class="bg-blue-50 rounded-lg p-6 mb-8">
+                <div class="bg-blue-50 p-6 mb-8">
                 <h4 class="text-xl font-semibold text-blue-900 mb-4">🚀 Quick Start</h4>
                 <ol class="space-y-2 text-blue-900">
                     <li>1. Start with the <span class="font-semibold">Parser Section</span> at the top</li>
@@ -236,15 +233,21 @@
                     <li>3. Add <span class="font-semibold">Field Sections</span> for each data field</li>
                     <li>4. Download your configuration file</li>
                 </ol>
+                <hr class="my-6">
+                <p class="text-blue-900">
+                    Find the full documentation and examples on how to use survey2gis under <a  class="underline" href="https://survey2gis.github.io/survey2gis-docs/">here</a>. (english only)
+                </p>
                 </div>
+
+
 
                 <!-- Required Settings -->
                 <div class="mb-8">
                 <h4 class="text-xl font-semibold text-gray-900 mb-4">Required Settings</h4>
 
                 <!-- Parser Section -->
-                <div class="bg-white shadow rounded-lg p-6 mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-3">⚙️ Parser Section</h4>
+                <div class="bg-white shadow p-6 mb-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Parser Section</h4>
                     <p class="text-gray-600 mb-2">These fields must be filled out:</p>
                     <ul class="space-y-2 text-gray-700">
                     <li class="flex items-start">
@@ -263,8 +266,8 @@
                 </div>
 
                 <!-- Field Sections -->
-                <div class="bg-white shadow rounded-lg p-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-3">📝 Field Sections</h4>
+                <div class="bg-white shadow p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Field Sections</h4>
                     <p class="text-gray-600 mb-3">For each field you need to specify:</p>
                     <div class="space-y-4">
                     <div>
@@ -288,7 +291,7 @@
                 <h4 class="text-xl font-semibold text-gray-900 mb-4">Common Tasks</h4>
                 
                 <!-- Creating Fields -->
-                <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="bg-white shadow p-6 mb-6">
                     <h4 class="text-lg font-semibold text-gray-900 mb-3">Creating a New Field</h4>
                     <ol class="space-y-2 text-gray-600">
                     <li>1. Click the "Add Field Section" button</li>
@@ -297,8 +300,6 @@
                     </ol>
                 </div>
         </div>
-
-
 
             <!-- Parser Modes Section -->
             <div class="mt-12">
@@ -333,8 +334,6 @@
                                 <li>Only one parser mode can be used per schema</li>
                             </ul>
                         </div>
-
-
                     </div>
 
                          <!-- Important Notes Section -->
@@ -348,7 +347,6 @@
                                 <li>Parser modes affect how geometry markers and key fields are interpreted</li>
                             </ul>
                         </div>
-
                 </div>
             </div>
         </div>
@@ -367,7 +365,7 @@
                                 <li>Valid characters: letters, numbers, underscore</li>
                                 <li>Case insensitive - stored in lowercase</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 name = index_fld
                             </code>
                         </div>
@@ -380,7 +378,7 @@
                                 <li><span class="font-medium">double:</span> Floating point numbers (-10.05, 0.0)</li>
                                 <li><span class="font-medium">text:</span> Generic text content</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 type = integer
                             </code>
                         </div>
@@ -392,7 +390,7 @@
                                 <li>Can use multiple characters</li>
                                 <li>Special values: "tab" and "space"</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 separator = ;<br>
                                 separator = tab<br>
                                 separator = space
@@ -412,7 +410,7 @@
                                 <li>Cannot be used with key or tag fields</li>
                                 <li>Not compatible with merge_separators</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 empty allowed = yes
                             </code>
                         </div>
@@ -424,7 +422,7 @@
                                 <li>Values: lower, upper, none</li>
                                 <li>Only applies to text fields</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 change case = lower
                             </code>
                         </div>
@@ -437,7 +435,7 @@
                                 <li>Case insensitive matching</li>
                                 <li>Max 254 characters for new text</li>
                             </ul>
-                            <code class="block bg-gray-100mt-2 text-sm rounded">
+                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
                                 @ABB = Abbreviation<br>
                                 @P1 = Point of type 1
                             </code>
@@ -450,19 +448,19 @@
     </div>
 </template>
   
-  <script setup>
-  import { defineProps } from 'vue'
-  defineProps({
-    section: {
-      type: String,
-      required: true
-    }
-  })
-  </script>
+<script setup>
+defineProps({
+  section: {
+    type: String,
+    required: true
+  }
+})
+</script>
   
-  <style scoped>
-  .prose h4 { @apply text-lg font-semibold mb-2; }
-  .prose h5 { @apply font-semibold mb-1; }
-  .prose ul { @apply list-disc ml-4 mb-2; }
-  .prose li { @apply mb-1; }
-  </style>
+<style scoped>
+.prose h4 { @apply text-lg font-semibold mb-2; }
+.prose h5 { @apply font-semibold mb-1; }
+.prose ul { @apply list-disc ml-4 mb-2; }
+.prose li { @apply mb-1; }
+code { @apply bg-gray-100 px-2 py-1 rounded text-sm; }
+</style>

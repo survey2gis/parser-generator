@@ -3,7 +3,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end"
     @click.self="$emit('close')"
   >
-    <div class="w-1/2 bg-white h-full overflow-y-auto">
+    <div class="w-5/6 bg-white h-full overflow-y-auto">
       <!-- Header -->
       <div class="flex justify-between items-center p-4 border-b">
         <h2 class="text-xl font-semibold">{{ title }}</h2>
