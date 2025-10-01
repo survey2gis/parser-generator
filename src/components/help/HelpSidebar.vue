@@ -11,7 +11,7 @@ import HelpSidebarEn from './HelpSidebarEn.vue'
 defineProps({
   section: {
     type: String,
-    required: true
+    default: 'introduction'
   }
 })
 

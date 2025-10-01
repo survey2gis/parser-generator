@@ -1,466 +1,431 @@
 <template>
-  <div class="prose prose-sm">
-        <!-- Parser Section Help Content -->
-        <div v-if="section === 'parser'" class="prose prose-sm">
-          
-          <div class="mb-8">
-            <p class="text-gray-600 mb-1">
-                This guide explains how to configure the parser section [Parser] in your configuration file. Each option controls specific aspects of how your input data is processed and interpreted.
-            </p>
-        </div>
-
-        <div class="space-y-8">
-            <!-- Required Options Section -->
-            <div class="border-b pb-6">
-                <h4 class="text-xl font-semibold mb-1 text-blue-600">Required Options</h4>
-                
-                <div class="grid gap-6">
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Coordinates (Required)</h3>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Specifies which fields in your input data contain the spatial coordinates of your measurements. The X and Y coordinates are mandatory, while Z is optional.</p>
-                            
-                            <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-                                <li><span class="font-medium">coor x, coor y:</span> Must be specified and reference existing numeric fields of type "double"</li>
-                                <li><span class="font-medium">coor z:</span> Optional - if not specified, Z coordinates default to 0.0</li>
-                            </ul>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                coor x = xfield<br>
-                                coor y = yfield<br>
-                                coor z = zfield
-                            </code>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Geometry Tags (Required)</h3>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Defines special markers that identify different types of geometries in your data. These tags allow the parser to convert simple point measurements into complex geometries like lines and polygons.</p>
-                            
-                            <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-                                <li><span class="font-medium">geom tag point:</span> Marks point features (optional in some parser modes)</li>
-                                <li><span class="font-medium">geom tag line:</span> Marks line features</li>
-                                <li><span class="font-medium">geom tag poly:</span> Marks polygon features</li>
-                            </ul>
-                            
-                            <p class="text-gray-600">You can define up to 32 tags per geometry type, but they must be unique and not overlap with field separators or quotation marks.</p>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                geom tag point = "*"<br>
-                                geom tag line = "-"<br>
-                                geom tag poly = "@"<br>
-                                geom tag poly = "@ "  # Alternative polygon tag
-                            </code>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Key Field (Required for some modes)</h3>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Specifies the field that contains identifier values linking multiple measurements that belong to the same geometry (like points in a line or polygon).</p>
-                            
-                            <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-                                <li>Mandatory for parser modes "End" and "Max"</li>
-                                <li>All measurements with the same key value are considered part of the same geometry</li>
-                                <li>Can be used with "key unique" option to handle multi-part geometries</li>
-                            </ul>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                key field = key<br>
-                                key unique = yes  # Optional, for multi-part geometries
-                            </code>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Tagging Mode (Required)</h3>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Determines how the parser interprets geometry tags and processes measurements into features.</p>
-                            
-                            <ul class="list-disc list-inside text-gray-600 ml-4 space-y-1">
-                                <li><span class="font-medium">min:</span> Minimal tagging - typically used when each geometry has one record with complete attributes</li>
-                                <li><span class="font-medium">max:</span> Maximum tagging - for complex geometries with multiple attribute records</li>
-                                <li><span class="font-medium">end:</span> End tagging - processes geometries based on ending markers</li>
-                                <li><span class="font-medium">none:</span> No tagging - treats all records as simple point measurements</li>
-                            </ul>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                tagging mode = end
-                            </code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Optional Options Section -->
-            <div>
-                <h4 class="text-xl font-semibold mb-1 text-green-600">Optional Settings</h4>
-                
-                <div class="grid gap-6">
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="font-semibold text-gray-800 text-lg">Comment Mark</h3>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Defines special characters that mark the beginning of comments in your input data. Any text after these markers will be ignored during processing.</p>
-                            
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Multiple comment marks can be specified</li>
-                                <li>Must not conflict with field separators or quotation marks</li>
-                            </ul>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                comment mark = #<br>
-                                comment mark = //
-                            </code>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-gray-800 text-lg">No Data Value</h4>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Specifies an integer value to represent null or missing data in your attributes. This value should be unique and not appear in valid data.</p>
-                            
-                            <p class="text-gray-600">This value will be written to output files when a field is empty or contains no valid data.</p>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                no data = -99999
-                            </code>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg">
-                        <h4 class="font-semibold text-gray-800 text-lg">Tag Strict Mode</h4>
-                        <div class="mt-3 space-y-3">
-                            <p class="text-gray-600">Controls how strictly the parser enforces geometry tagging rules. When enabled, every measurement must contain a valid geometry tag or it will be discarded.</p>
-                            
-                            <p class="text-gray-600">Defaults to "off" if not specified. Enable this for stricter data validation.</p>
-                            
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                tag strict = yes
-                            </code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 p-6 bg-blue-50 rounded-lg">
-            <h4 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h4>
-            <ul class="list-disc list-inside space-y-1 text-blue-700">
-                <li>All geometry tags must be unique and not overlap with other special characters</li>
-                <li>Coordinate fields must be numeric and of type "double"</li>
-                <li>When using the key field, consider whether your geometries might have multiple parts</li>
-                <li>The parser mode significantly affects how your data is processed - choose carefully</li>
-                <li>Tag strict mode can help catch data errors but may discard valid measurements if not properly tagged</li>
-            </ul>
-        </div>
-
-        </div>
-  
-        <!-- Imprint Content -->
-        <div v-if="section === 'imprint'" class="prose prose-sm">
-
-        <!-- Contact Information Card -->
-        <div class="bg-white mb-3 mt-6">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Provider</h4>
-            <div class="space-y-1 text-gray-600">
-                <p class="font-medium">
-                    State Office for Cultural Heritage Preservation<br>
-                    Stuttgart Regional Council<br>
-                    Berliner Straße 12<br>
-                    73728 Esslingen (Neckar), Germany</p>
-            </div>
-        </div>
-
-        <!-- Usage Terms Card -->
-        <div class="bg-white mb-3">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Usage Terms</h4>
-            <ol class="list-decimal list-inside space-y-3 text-gray-600">
-                <li>Usage rights are granted to you free of charge.</li>
-                <li>
-                    The State Office for Cultural Heritage Preservation Baden-Württemberg in the Stuttgart Regional Council 
-                    assumes no liability for hardware or software damage caused by the use of this application.
-                </li>
-                <li>
-                    No software support is guaranteed. The LAD and CSGIS are not liable for negligence. 
-                    Liability for indirect damage or data recovery is excluded.
-                </li>
-                <li>
-                    This site does not use cookies.
-                </li>
-                <li>
-                    No data is processed or stored server-side.
-                </li>
-            </ol>
-        </div>
-
-        <!-- Team Information Card -->
-        <div class="bg-white mb-3">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Project Team</h4>
-            <ul class="space-y-1 text-gray-600">
-                <li>Jonas Abele</li>
-                <li>Claus Brenner</li>
-                <li>José Canalejo</li>
-                <li>Toni Schönbuchner</li>
-            </ul>
-        </div>
-
-        <!-- Implementation Details Card -->
-        <div class="bg-white rounded-lg">
-            <h4 class="text-xl font-bold text-gray-800 mb-1">Project Implementation</h4>
-            <div class="text-gray-600">
-                <p class="font-medium">CSGIS GbR</p>
-                <p>Am Eichbüchl 7</p>
-                <p>D - 82223 Eichenau, Germany</p>
-                <a href="http://www.csgis.de" target="_blank" rel="noopener noreferrer" 
-                   class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
-                    www.csgis.de (v1.1)
-                </a>
-            </div>
-        </div>
-        </div>
-
-        <!-- Help Content -->
-        <div v-if="section === 'help'" class="prose prose-sm">
-          <p class="text-lg text-gray-600 mb-8">A web tool to create parser files for Survey2GIS.</p>
-
-                <!-- Quick Start -->
-                <div class="bg-blue-50 p-6 mb-8">
-                <h4 class="text-xl font-semibold text-blue-900 mb-4">🚀 Quick Start</h4>
-                <ol class="space-y-2 text-blue-900">
-                    <li>1. Start with the <span class="font-semibold">Parser Section</span> at the top</li>
-                    <li>2. Fill in the required fields (marked with <span class="text-red-500">*</span>)</li>
-                    <li>3. Add <span class="font-semibold">Field Sections</span> for each data field</li>
-                    <li>4. Download your configuration file</li>
-                </ol>
-                <hr class="my-6">
-                <p class="text-blue-900">
-                    Find the full documentation and examples on how to use survey2gis under <a  class="underline" href="https://survey2gis.github.io/survey2gis-docs/">here</a>. (english only)
-                </p>
-                </div>
-
-
-
-                <!-- Required Settings -->
-                <div class="mb-8">
-                <h4 class="text-xl font-semibold text-gray-900 mb-4">Required Settings</h4>
-
-                <!-- Parser Section -->
-                <div class="bg-white shadow p-6 mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Parser Section</h4>
-                    <p class="text-gray-600 mb-2">These fields must be filled out:</p>
-                    <ul class="space-y-2 text-gray-700">
-                    <li class="flex items-start">
-                        <span class="font-semibold min-w-[100px]">Name:</span>
-                        <span>Your configuration name</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="font-semibold min-w-[100px]">COORX:</span>
-                        <span>Field name for X coordinates</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="font-semibold min-w-[100px]">COORY:</span>
-                        <span>Field name for Y coordinates</span>
-                    </li>
-                    </ul>
-                </div>
-
-                <!-- Field Sections -->
-                <div class="bg-white shadow p-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Field Sections</h4>
-                    <p class="text-gray-600 mb-3">For each field you need to specify:</p>
-                    <div class="space-y-4">
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Name</h4>
-                        <p class="text-gray-600">Maximum 10 characters, letters, numbers, and underscores only</p>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-900">Type</h4>
-                        <ul class="list-disc ml-5 text-gray-600">
-                        <li>integer (whole numbers)</li>
-                        <li>double (decimal numbers)</li>
-                        <li>text (text strings)</li>
-                        </ul>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <!-- Common Tasks -->
-                <div class="mb-8">
-                <h4 class="text-xl font-semibold text-gray-900 mb-4">Common Tasks</h4>
-                
-                <!-- Creating Fields -->
-                <div class="bg-white shadow p-6 mb-6">
-                    <h4 class="text-lg font-semibold text-gray-900 mb-3">Creating a New Field</h4>
-                    <ol class="space-y-2 text-gray-600">
-                    <li>1. Click the "Add Field Section" button</li>
-                    <li>2. Fill in the required Name and Type</li>
-                    <li>3. Adjust optional settings as needed</li>
-                    </ol>
-                </div>
-        </div>
-
-            <!-- Parser Modes Section -->
-            <div class="mt-12">
-                <h4 class="text-xl font-semibold mb-3 text-green-600">Parser Modes</h4>
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h4 class="font-semibold text-gray-800 mb-1">Understanding Geometry Processing</h4>
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="font-medium text-gray-700">Key Limitations</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Vertices of a single geometry must be in one file</li>
-                                <li>Vertex measurements can only be interrupted by comments/empty lines</li>
-                                <li>Available geometry types: point, line, polygon</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">Geometry Markers</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Use special characters (e.g., @, $) to mark geometry types</li>
-                                <li>Can be separate fields or added to existing fields</li>
-                                <li>Must be declared in "tag field" option</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">Important Notes</h4>
-                            <ul class="list-disc list-inside text-gray-600 ml-4">
-                                <li>Polygons are automatically closed - no need for duplicate vertices</li>
-                                <li>Key field values are case-sensitive</li>
-                                <li>Only one parser mode can be used per schema</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                         <!-- Important Notes Section -->
-                         <div class="mt-8 p-6 bg-blue-50 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 mb-3 text-lg">Important Considerations</h4>
-                            <ul class="list-disc list-inside space-y-1 text-blue-700">
-                                <li>Field names are limited to 10 characters and specific valid characters</li>
-                                <li>Separator characters must be unique and not overlap with other special characters</li>
-                                <li>Empty fields may not work correctly with whitespace separators</li>
-                                <li>Text replacement only works on exact matches of field content</li>
-                                <li>Parser modes affect how geometry markers and key fields are interpreted</li>
-                            </ul>
-                        </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Field Section Help Content -->
-        <div v-if="section === 'field'" class="prose prose-sm">
-          
-          <div class="grid gap-6">
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h4 class="font-semibold text-gray-800 text-lg">Required Field Options</h4>
-                    <div class="mt-3 space-y-4">
-                        <div>
-                            <h4 class="font-medium text-gray-700">name (Required)</h4>
-                            <p class="text-gray-600 mt-1">The identifier for your field (max 10 characters)</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li>Valid characters: letters, numbers, underscore</li>
-                                <li>Case insensitive - stored in lowercase</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                name = index_fld
-                            </code>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">type (Required)</h4>
-                            <p class="text-gray-600 mt-1">Defines the data type of the field</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li><span class="font-medium">integer:</span> Whole numbers (-1, 0, 100)</li>
-                                <li><span class="font-medium">double:</span> Floating point numbers (-10.05, 0.0)</li>
-                                <li><span class="font-medium">text:</span> Generic text content</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                type = integer
-                            </code>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">separator</h4>
-                            <p class="text-gray-600 mt-1">Defines characters that separate fields (required except for last field)</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li>Can use multiple characters</li>
-                                <li>Special values: "tab" and "space"</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                separator = ;<br>
-                                separator = tab<br>
-                                separator = space
-                            </code>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h3 class="font-semibold text-gray-800 text-lg">Optional Field Settings</h3>
-                    <div class="mt-3 space-y-4">
-                        <div>
-                            <h4 class="font-medium text-gray-700">empty allowed</h4>
-                            <p class="text-gray-600 mt-1">Controls whether fields can be empty</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li>Default: off</li>
-                                <li>Cannot be used with key or tag fields</li>
-                                <li>Not compatible with merge_separators</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                empty allowed = yes
-                            </code>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">change case</h4>
-                            <p class="text-gray-600 mt-1">Converts text field content to upper or lower case</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li>Values: lower, upper, none</li>
-                                <li>Only applies to text fields</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                change case = lower
-                            </code>
-                        </div>
-
-                        <div>
-                            <h4 class="font-medium text-gray-700">Text Replacement (@)</h4>
-                            <p class="text-gray-600 mt-1">Replaces codes or abbreviations with full text</p>
-                            <ul class="list-disc list-inside text-gray-600 ml-4 mt-2">
-                                <li>Format: @old=new</li>
-                                <li>Case insensitive matching</li>
-                                <li>Max 254 characters for new text</li>
-                            </ul>
-                            <code class="block bg-gray-100 mt-2 text-sm rounded p-2">
-                                @ABB = Abbreviation<br>
-                                @P1 = Point of type 1
-                            </code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+  <div class="h-screen flex flex-col ">
+    <!-- Tab Navigation -->
+    <div class="bg-white border-b border-gray-200">
+      <div class="flex">
+        <button 
+          class="flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2"
+          :class="activeTab === 'introduction' ? 'text-blue-600 border-blue-600 bg-blue-50' : 'text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50'"
+          @click="activeTab = 'introduction'"
+        >
+          Introduction
+        </button>
+        <button 
+          class="flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2"
+          :class="activeTab === 'interface' ? 'text-blue-600 border-blue-600 bg-blue-50' : 'text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50'"
+          @click="activeTab = 'interface'"
+        >
+          Website UI
+        </button>
+        <button 
+          class="flex-1 px-4 py-3 text-sm font-medium transition-colors border-b-2"
+          :class="activeTab === 'parser' ? 'text-blue-600 border-blue-600 bg-blue-50' : 'text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50'"
+          @click="activeTab = 'parser'"
+        >
+          Define Parser
+        </button>
+      </div>
     </div>
+
+    <!-- Tab Content -->
+    <div class="flex-1  p-6">
+      
+      <!-- Introduction Content -->
+      <div v-show="activeTab === 'introduction'">
+        <h2 class="text-2xl font-bold text-gray-900 mb-3">Survey2GIS Parser Builder</h2>
+        <p class="text-gray-600 mb-6">
+          This tool helps you create parser files that enable Survey2GIS to convert your tachymeter data into Shapefiles, GeoJSON, and other GIS formats.
+        </p>
+
+        <div class="border-blue-500 rounded mb-6">
+          <h5 class="font-semibold text-blue-900 mb-3">What is a Parser File?</h5>
+          <p class="text-sm mb-4">
+            A parser file is a configuration that tells Survey2GIS how to read and interpret your tachymeter data. <br>
+            It defines which columns contain coordinates, what characters mark different geometry types, and how to process the measurements.
+          </p>
+          
+          <h6 class="font-semibold text-blue-900 mb-2 text-sm">Compatible with:</h6>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <strong>Command Line Tool:</strong> 
+              <a href="https://github.com/survey2gis/survey-tools" class="text-blue-700 hover:underline underline ml-1" target="_blank" rel="noopener noreferrer">
+                github.com/survey2gis/survey-tools
+              </a>
+            </li>
+            <li>
+              <strong>QGIS Plugin:</strong> 
+              <a href="https://plugins.qgis.org/plugins/s2g_data_processor/" class="text-blue-700 hover:underline underline ml-1" target="_blank" rel="noopener noreferrer">
+                S2G Data Processor
+              </a>
+            </li>
+          </ul>
+          
+          <div class="mt-4 pt-4 border-t border-blue-200">
+            <p class="text-sm text-blue-800 mb-1">
+              <strong>Full Documentation:</strong>
+            </p>
+            <a href="https://s2g-docs.survey-tools.org/parser-schema.html" class="text-blue-700 hover:text-blue-600 font-medium underline text-sm" target="_blank" rel="noopener noreferrer">
+              Parser Schema Documentation
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interface Content -->
+      <div v-show="activeTab === 'interface'">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Understanding the Interface</h2>
+
+        <div class="space-y-4">
+          <div class="bg-white rounded-lg shadow-sm p-5">
+            <h5 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span class="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">1</span>
+              The Navigation Bar
+            </h5>
+            <p class="text-gray-600 mb-3">
+                <img src="img/nav.jpeg" alt="Survey2GIS Navigation" class="border mb-3">
+
+                From left to right:
+                <ol class="list-decimal list-inside space-y-1 mt-2">
+                  <li>Logo and Home Button - Click to return to the homepage</li>
+                  <li>Select for:
+                    <ul class="list-disc list-inside pl-6">
+                      <li>Uploading a parser file locally saved on your hard drive</li>
+                      <li>Load a sample parser file for learning purposes</li>
+                      <li>Search the community parser library for shared configurations</li>
+                    </ul>
+                  </li>
+                  <li>Switch between German and English language</li>
+                  <li>Imprint of this website</li>
+                  <li>Open this help sidebar</li>
+                </ol>
+            </p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow-sm p-5">
+            <h5 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span class="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+              Start a New Parser
+            </h5>
+            <p class="text-gray-600 mb-3">
+                On the left side, click the following button to start a new parser configuration.
+            </p>
+            <img src="img/start_new.jpeg" alt="Start new parser" class="border mb-3">
+            <p class="text-gray-600">
+                You will see your defined parser in live preview on the right side.
+            </p>
+            <img src="img/parser_definition.jpeg" alt="Parser GUI" class="border mt-2 mb-2">
+            <p class="text-gray-600 text-sm">
+                For more information visit the next tab "Define Parser".
+            </p>
+          </div>
+
+          <div class="bg-white rounded-lg shadow-sm p-5">
+            <h5 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span class="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">3</span>
+              Parser Repository
+            </h5>
+            <p class="text-gray-600 mb-3">
+                By choosing the "Search Community Parsers" option in the navigation bar you can access the parser repository.
+            </p>
+            <img src="img/parser_repository.jpeg" alt="Parser Repository" class="border mb-2">
+            <p class="text-gray-600 text-sm">
+                Here you can search for parsers shared by the community. You can filter by name.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parser Content -->
+<div v-show="activeTab === 'parser'">
+  <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Define a Parser</h2>
+  <p class="text-gray-600 mb-6">Understanding parser modes and configuring your parser file.</p>
+
+  <!-- Understanding Parser Modes -->
+  <div class="bg-white rounded-lg shadow-sm p-5 mb-4">
+    <h4 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+      <span class="bg-purple-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+      <span>Understanding Parser Modes</span>
+    </h4>
+    <p class="text-gray-600 text-sm mb-4">
+      Before creating your parser, understand how your tachymeter data is structured. 
+      Choose the mode that matches your data format.
+    </p>
+
+    <div class="space-y-4">
+      <div class="border-l-4 border-gray-300 pl-4">
+        <h6 class="font-semibold text-gray-900 mb-1">Mode: "Min" (Minimal Coding)</h6>
+        <p class="text-gray-600 text-sm mb-2">
+          Best for reducing field work. Only the first vertex of lines/polygons needs full attributes.
+        </p>
+        <div class="bg-gray-50 p-3 rounded">
+          <p class="text-xs text-gray-600 mb-1">Example:</p>
+          <pre class="text-xs text-gray-700">1 polygon 1<span class="bg-red-200"> @ </span>10.00 10.00 1.00
+10.00 20.00 1.05
+20.00 20.00 1.10</pre>
+        </div>
+      </div>
+
+      <div class="border-l-4 border-gray-300 pl-4">
+        <h6 class="font-semibold text-gray-900 mb-1">Mode: "Max" (Maximum Control)</h6>
+        <p class="text-gray-600 text-sm mb-2">
+          Every measurement must have a geometry tag. Each vertex has complete attributes. Requires separate key field.
+        </p>
+        <div class="bg-gray-50 p-3 rounded">
+          <p class="text-xs text-gray-600 mb-1">Example:</p>
+          <pre class="text-xs text-gray-700">1 polygon 1<span class="bg-red-200"> @ </span>10.00 10.00 1.00
+2 polygon 1<span class="bg-red-200"> @ </span>10.00 20.00 1.05
+3 polygon 1<span class="bg-red-200"> @ </span>20.00 20.00 1.10</pre>
+        </div>
+      </div>
+
+      <div class="border-l-4 border-gray-300 pl-4">
+        <h6 class="font-semibold text-gray-900 mb-1">Mode: "End" (Flexible Surveying)</h6>
+        <p class="text-gray-600 text-sm mb-2">
+          Geometry type is decided at the final measurement. Tag appears only on last vertex.
+        </p>
+        <div class="bg-gray-50 p-3 rounded">
+          <p class="text-xs text-gray-600 mb-1">Example:</p>
+          <pre class="text-xs text-gray-700">1 polygon 1 10.00 10.00 1.00
+2 polygon 1 10.00 20.00 1.05
+4 polygon 1<span class="bg-red-200"> @ </span>20.00 10.00 1.00</pre>
+        </div>
+      </div>
+
+      <div class="border-l-4 border-gray-300 pl-4">
+        <h6 class="font-semibold text-gray-900 mb-1">Mode: "None" (Points Only)</h6>
+        <p class="text-gray-600 text-sm mb-2">
+          No geometry markers. All measurements are simple points (e.g., elevation models).
+        </p>
+        <div class="bg-gray-50 p-3 rounded">
+          <p class="text-xs text-gray-600 mb-1">Example:</p>
+          <pre class="text-xs text-gray-700">1 10.00 10.00 1.00
+2 10.00 20.00 1.05
+3 20.00 20.00 1.10</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Understanding the Forms -->
+  <div class="bg-white rounded-lg shadow-sm p-5 mb-4">
+    <h4 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+      <span class="bg-blue-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+      <span>Understanding the Two Forms</span>
+    </h4>
+    <p class="text-gray-600 text-sm mb-4">
+      Creating a parser requires filling out two types of forms: one Parser Section and multiple Field Sections.
+    </p>
+
+    <div class="mb-4">
+      <h6 class="font-semibold text-gray-900 mb-2">Parser Section Form</h6>
+      <div class="border-l-4 border-blue-500 pl-4">
+      <p class="text-gray-600 text-sm mb-2">
+        <img src="img/parser.jpeg" alt="Parser Section Form" class="border mb-2 h-80"><br>
+        <strong>Purpose:</strong> Defines the overall structure and rules for reading your data file. <br>
+        This tells Survey2GIS which fields contain coordinates, what characters mark geometry types, 
+        and which parser mode to use.
+      </p>
+      <p class="text-gray-600 text-sm">
+        <strong>You fill this out once</strong> - it contains global settings for your entire data file.
+      </p>
+      <div class="space-y-4 mt-4">
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Name (Required)</h6>
+          <p class="text-gray-600 text-sm">Give your parser a descriptive name for identification.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Tagging Mode (Required)</h6>
+          <p class="text-gray-600 text-sm mb-2">Select the parser mode that matches your data structure (see above).</p>
+          <p class="text-sm text-gray-700">Options: <code class="bg-gray-100 px-1">min</code>, <code class="bg-gray-100 px-1">max</code>, <code class="bg-gray-100 px-1">end</code>, <code class="bg-gray-100 px-1">none</code></p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Geometry Tags</h6>
+          <p class="text-gray-600 text-sm mb-2">Define special markers that identify different geometry types in your data.</p>
+          <ul class="space-y-1 text-sm text-gray-700">
+            <li><strong>geom tag point:</strong> e.g., "*" (optional for some modes)</li>
+            <li><strong>geom tag line:</strong> e.g., "-" (required except "None")</li>
+            <li><strong>geom tag poly:</strong> e.g., "@" (required except "None")</li>
+          </ul>
+          <p class="text-xs text-gray-500 mt-1">Tags must be unique and not overlap with field separators.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Tag Field</h6>
+          <p class="text-gray-600 text-sm">The field that contains the geometry markers. Must be defined for all modes except "None".</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Key Field</h6>
+          <p class="text-gray-600 text-sm">Field containing values that link measurements belonging to the same geometry. Required for "End" and "Max" modes.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Comment Mark (Optional)</h6>
+          <p class="text-gray-600 text-sm">Characters that mark comments in your data (e.g., # or //). Text after these will be ignored.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">No Data Value (Optional)</h6>
+          <p class="text-gray-600 text-sm">Integer value representing null/missing data (e.g., -99999). Used when fields are empty.</p>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="">
+      <h6 class="font-semibold text-gray-900 mb-2">Field Section Forms</h6>
+            <div class="border-l-4 border-green-500 pl-4">
+
+      <p class="text-gray-600 text-sm mb-2">
+        <img src="img/field.jpeg" alt="Field Section Form" class="border mb-2 h-80"><br>
+        <strong>Purpose:</strong> Describes each data column in your file - its name, data type (integer, double, text), 
+        and how it's separated from the next column.
+      </p>
+      <p class="text-gray-600 text-sm mb-3">
+        <strong>You need one Field Section for each column</strong> in your data, defined in the exact order they appear (left to right).
+      </p>
+      <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded text-sm">
+        <p class="text-gray-800 mb-0">
+          <strong>Example:</strong> If your data looks like: <code class="bg-white px-1 py-0.5">1 boundary @ 10.00 20.00 1.50</code><br>
+          You need 6 Field Sections: ID (integer), label (text), tag (text), X (double), Y (double), Z (double)
+        </p>
+      </div>
+      <p class="text-gray-600 text-sm mb-4 mt-4">
+        Add one field section for each column in your tachymeter data. Fields must be in the same order as they appear in your data.
+      </p>
+
+      <div class="space-y-4">
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Field Name (Required)</h6>
+          <p class="text-gray-600 text-sm">Identifier for your field (max 10 characters). Valid: letters, numbers, underscore only.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Field Type (Required)</h6>
+          <p class="text-gray-600 text-sm mb-2">Defines the data type of the field:</p>
+          <ul class="space-y-1 text-sm text-gray-700">
+            <li><strong>integer:</strong> Whole numbers (-1, 0, 100)</li>
+            <li><strong>double:</strong> Decimal numbers (-10.05, 0.0) - required for coordinates</li>
+            <li><strong>text:</strong> Generic text content</li>
+          </ul>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Separator (Required except last field)</h6>
+          <p class="text-gray-600 text-sm">Characters separating this field from the next. Can use multiple characters or special values: "tab" and "space".</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Coordinate Fields (Required)</h6>
+          <p class="text-gray-600 text-sm mb-2">After defining your fields, specify which ones contain coordinates:</p>
+          <ul class="space-y-1 text-sm text-gray-700">
+            <li><strong>coor x:</strong> Field name for X coordinates (required, type: double)</li>
+            <li><strong>coor y:</strong> Field name for Y coordinates (required, type: double)</li>
+            <li><strong>coor z:</strong> Field name for Z coordinates (optional, type: double)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4 class="text-lg font-semibold text-gray-900 mb-3 mt-6 flex items-center gap-2">
+        <span>Optional Field Settings</span>
+      </h4>
+      
+      <div class="space-y-3">
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Empty Allowed</h6>
+          <p class="text-gray-600 text-sm">Allow fields to be empty. Cannot be used with key or tag fields.</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Skip Field</h6>
+          <p class="text-gray-600 text-sm">Process but don't save this field in output (useful for unwanted data columns).</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Change Case</h6>
+          <p class="text-gray-600 text-sm">Convert text to upper/lower case (text fields only).</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Text Replacement (@)</h6>
+          <p class="text-gray-600 text-sm">Replace codes with full text (e.g., @P1 = Point of type 1).</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Quotation</h6>
+          <p class="text-gray-600 text-sm">Remove quotation marks from text field content (e.g., ' or ").</p>
+        </div>
+
+        <div>
+          <h6 class="font-semibold text-gray-900 text-sm mb-1">Merge Separators</h6>
+          <p class="text-gray-600 text-sm">Treat adjacent separators as one (useful for variable whitespace).</p>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Important Notes -->
+  <div class="bg-white rounded-lg shadow-sm p-5">
+    <h4 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+      <span class="bg-yellow-600 text-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
+      <span>Important Considerations</span>
+    </h4>
+    <ul class="space-y-1 text-sm text-gray-700 mb-0 list-disc list-inside pl-3">
+      <li>Geometry tags must be unique and not overlap with field separators</li>
+      <li>Coordinate fields must be type "double"</li>
+      <li>Field order must exactly match your data file</li>
+      <li>Polygons are automatically closed (no duplicate vertices needed)</li>
+      <li>Key field values are case-sensitive</li>
+      <li>Vertices of one geometry must be in the same file and consecutive (only interrupted by comments)</li>
+    </ul>
+  </div>
+
+</div>
+    </div>
+  </div>
 </template>
-  
+
 <script setup>
-defineProps({
-  section: {
+import { ref, watch } from 'vue';
+
+const props = defineProps({
+  section: {  
     type: String,
-    required: true
+    default: 'introduction'
   }
-})
+});
+
+const activeTab = ref('introduction');
+
+// Map section to tab
+watch(() => props.section, (newSection) => {
+  const mapping = {
+    'field': 'parser',
+    'parser': 'parser',
+    'interface': 'interface',
+    'help': 'introduction'
+  };
+  activeTab.value = mapping[newSection] || 'introduction';
+}, { immediate: true });
+
+// Expose method to allow parent to change tab programmatically
+const openTab = (tabName) => {
+  if (['introduction', 'interface', 'parser'].includes(tabName)) {
+    activeTab.value = tabName;
+  }
+};
+
+defineExpose({
+  openTab
+});
 </script>
-  
+
 <style scoped>
-.prose h4 { @apply text-lg font-semibold mb-2; }
-.prose h5 { @apply font-semibold mb-1; }
-.prose ul { @apply list-disc ml-4 mb-2; }
-.prose li { @apply mb-1; }
-code { @apply bg-gray-100 px-2 py-1 rounded text-sm; }
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 </style>
