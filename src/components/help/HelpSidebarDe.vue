@@ -216,10 +216,10 @@ Reduziert den Aufwand beim Aufnehmen. Nur der erste Punkt einer Linie oder Fläc
     </p>
 
     <div class="mb-4">
-      <h6 class="font-semibold text-gray-900 mb-2">Parser-Abschnitt Formular</h6>
+      <h5 class="font-semibold text-gray-900 mb-2">Parser-Abschnitt Formular</h5>
       <div class="border-l-4 border-blue-500 pl-4">
       <p class="text-gray-600 text-sm mb-2">
-        <img src="img/parser.jpeg" alt="Parser-Abschnitt Formular" class="border mb-2 h-80"><br>
+        <img src="img/parser.jpeg" alt="Parser-Abschnitt Formular" class="border mb-2 h-100"><br>
         <strong>Zweck:</strong> Definiert die Gesamtstruktur und Regeln zum Lesen Ihrer Datendatei. <br>
         Dies teilt Survey2GIS mit, welche Felder Koordinaten enthalten, welche Zeichen Geometrietypen markieren 
         und welcher Parser-Modus verwendet werden soll.
@@ -229,7 +229,7 @@ Reduziert den Aufwand beim Aufnehmen. Nur der erste Punkt einer Linie oder Fläc
       </p>
       <div class="space-y-4 mt-4">
         <div>
-          <h6 class="font-semibold text-gray-900 text-sm mb-1">Name (Erforderlich)</h6>
+          <h5 class="font-semibold text-gray-900 text-sm mb-1">Name (Erforderlich)</h5>
           <p class="text-gray-600 text-sm">Geben Sie Ihrem Parser einen beschreibenden Namen zur Identifikation.</p>
         </div>
 
@@ -274,11 +274,11 @@ Reduziert den Aufwand beim Aufnehmen. Nur der erste Punkt einer Linie oder Fläc
     </div>
 
     <div class="">
-      <h6 class="font-semibold text-gray-900 mb-2">Feld-Abschnitt Formulare</h6>
+      <h5 class="font-semibold text-gray-900 mb-2">Feld-Abschnitt Formulare</h5>
             <div class="border-l-4 border-green-500 pl-4">
 
       <p class="text-gray-600 text-sm mb-2">
-        <img src="img/field.jpeg" alt="Feld-Abschnitt Formular" class="border mb-2 h-80"><br>
+        <img src="img/field.jpeg" alt="Feld-Abschnitt Formular" class="border mb-2 h-90"><br>
         <strong>Zweck:</strong> Beschreibt jede Datenspalte in Ihrer Datei - ihren Namen, Datentyp (integer, double, text) 
         und wie sie vom nächsten Feld getrennt ist.
       </p>

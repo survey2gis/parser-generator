@@ -217,10 +217,10 @@
     </p>
 
     <div class="mb-4">
-      <h6 class="font-semibold text-gray-900 mb-2">Parser Section Form</h6>
+      <h5 class="font-semibold text-gray-900 mb-2">Parser Section Form</h5>
       <div class="border-l-4 border-blue-500 pl-4">
       <p class="text-gray-600 text-sm mb-2">
-        <img src="img/parser.jpeg" alt="Parser Section Form" class="border mb-2 h-80"><br>
+        <img src="img/parser.jpeg" alt="Parser Section Form" class="border mb-2 h-100"><br>
         <strong>Purpose:</strong> Defines the overall structure and rules for reading your data file. <br>
         This tells Survey2GIS which fields contain coordinates, what characters mark geometry types, 
         and which parser mode to use.
@@ -275,11 +275,11 @@
     </div>
 
     <div class="">
-      <h6 class="font-semibold text-gray-900 mb-2">Field Section Forms</h6>
+      <h5 class="font-semibold text-gray-900 mb-2">Field Section Forms</h5>
             <div class="border-l-4 border-green-500 pl-4">
 
       <p class="text-gray-600 text-sm mb-2">
-        <img src="img/field.jpeg" alt="Field Section Form" class="border mb-2 h-80"><br>
+        <img src="img/field.jpeg" alt="Field Section Form" class="border mb-2 h-100"><br>
         <strong>Purpose:</strong> Describes each data column in your file - its name, data type (integer, double, text), 
         and how it's separated from the next column.
       </p>
